@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" role="img" aria-labelledby="materials-title materials-desc">
+  <title id="materials-title">Courtyard House material fields</title>
+  <desc id="materials-desc">Subtle stone, plaster, and timber hatching gives the courtyard house tactility.</desc>
+  <g id="layer-materials">
+    <path d="M250 198H730V282H250Z" fill="#8a8174" fill-opacity=".12"/>
+    <path d="M250 456H730V542H250Z" fill="#8a8174" fill-opacity=".14"/>
+    <path d="M250 282H370V456H250Z" fill="#1f1d1a" fill-opacity=".055"/>
+    <path d="M610 282H730V456H610Z" fill="#1f1d1a" fill-opacity=".055"/>
+    <path d="M278 226H700M278 248H700M278 484H700M278 506H700" stroke="#8a8174" stroke-opacity=".42" stroke-width="1"/>
+    <path d="M280 306L348 374M280 350L348 418M632 306L700 374M632 350L700 418" stroke="#8a8174" stroke-opacity=".32" stroke-width="1"/>
+    <path d="M390 304H590M390 434H590" stroke="#ba9c66" stroke-opacity=".45" stroke-width="2"/>
+  </g>
+</svg>

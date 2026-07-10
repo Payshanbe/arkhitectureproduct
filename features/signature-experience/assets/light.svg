@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" role="img" aria-labelledby="light-title light-desc">
+  <title id="light-title">Courtyard House light study</title>
+  <desc id="light-desc">Soft directional daylight crosses the courtyard and creates restrained shadows.</desc>
+  <g id="layer-light">
+    <path d="M720 128L430 456H730V282Z" fill="#ba9c66" fill-opacity=".18"/>
+    <path d="M710 154L590 282M682 184L610 300M650 220L610 338" stroke="#ba9c66" stroke-linecap="round" stroke-opacity=".62" stroke-width="2"/>
+    <path d="M370 456L610 456L690 542H450Z" fill="#1f1d1a" fill-opacity=".075"/>
+    <path d="M390 282L250 198" stroke="#6f675d" stroke-opacity=".18" stroke-width="18"/>
+  </g>
+</svg>

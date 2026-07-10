@@ -1,0 +1,80 @@
+:root {
+  /* Color: warm editorial neutrals that stay behind the photography. */
+  --color-background-primary: #f4f1eb;
+  --color-background-secondary: #ebe6dc;
+  --color-surface-primary: #f9f7f2;
+  --color-surface-secondary: #e8e1d6;
+  --color-text-primary: #1f1d1a;
+  --color-text-secondary: #5f5a52;
+  --color-text-muted: #8a8378;
+  --color-accent-primary: #746758;
+  --color-accent-hover: #5d5246;
+  --color-border-primary: #d7d0c4;
+  --color-border-strong: #bfb5a7;
+  --color-overlay-light: rgb(244 241 235 / 72%);
+  --color-overlay-dark: rgb(31 29 26 / 48%);
+  --color-focus: #7d705f;
+  --color-feedback-success: #4f6f55;
+  --color-feedback-warning: #8a6a35;
+  --color-feedback-error: #8a3f35;
+  --color-feedback-info: #4c6270;
+
+  /* Layout: full-width canvas, disciplined grid, narrow reading measures. */
+  --container-padding: clamp(24px, 4vw, 72px);
+  --container-padding-mobile: 20px;
+  --container-max: 1680px;
+  --grid-gap: clamp(16px, 2vw, 32px);
+  --text-width: 680px;
+  --statement-width: 1100px;
+
+  /* Spacing: documented 4-200px scale. */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-6: 24px;
+  --space-8: 32px;
+  --space-12: 48px;
+  --space-16: 64px;
+  --space-20: 80px;
+  --space-24: 96px;
+  --space-30: 120px;
+  --space-40: 160px;
+  --space-50: 200px;
+
+  --section-spacing-small: clamp(var(--space-24), 10vw, var(--space-30));
+  --section-spacing-medium: clamp(var(--space-30), 12vw, var(--space-40));
+  --section-spacing-large: clamp(var(--space-40), 14vw, var(--space-50));
+  --section-spacing-hero: clamp(var(--space-40), 16vw, 220px);
+
+  /* Shape: restrained, never decorative. */
+  --radius-none: 0;
+  --radius-xs: 2px;
+  --radius-sm: 4px;
+  --radius-md: 8px;
+
+  /* Layering: enough structure for navigation, overlays, and future motion. */
+  --z-base: 0;
+  --z-raised: 10;
+  --z-header: 50;
+  --z-overlay: 100;
+  --z-modal: 200;
+
+  /* Transitions: quiet defaults for non-GSAP interaction states. */
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --duration-fast: 160ms;
+  --duration-base: 240ms;
+  --duration-slow: 480ms;
+  --transition-color:
+    color var(--duration-base) var(--ease-out),
+    background-color var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out), opacity var(--duration-base) var(--ease-out);
+}
+
+@media (width < 768px) {
+  :root {
+    --container-padding: var(--container-padding-mobile);
+    --grid-gap: 16px;
+  }
+}

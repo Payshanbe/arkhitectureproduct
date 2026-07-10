@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" role="img" aria-labelledby="envelope-title envelope-desc">
+  <title id="envelope-title">Courtyard House envelope</title>
+  <desc id="envelope-desc">The architectural envelope frames the courtyard and defines the interior perimeter.</desc>
+  <g id="layer-envelope">
+    <path d="M250 198H730V542H250Z" fill="#f4f1eb" fill-opacity=".34" stroke="#6f675d" stroke-width="2"/>
+    <path d="M370 282H610V456H370Z" fill="#f4f1eb" fill-opacity=".88" stroke="#6f675d" stroke-width="2"/>
+    <path d="M250 198H730V282H610V456H730V542H250V456H370V282H250Z" fill="#8a8174" fill-opacity=".09"/>
+    <path d="M250 282H370M610 282H730M250 456H370M610 456H730" stroke="#6f675d" stroke-width="2"/>
+  </g>
+</svg>

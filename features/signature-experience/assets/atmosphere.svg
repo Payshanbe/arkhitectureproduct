@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" role="img" aria-labelledby="atmosphere-title atmosphere-desc">
+  <title id="atmosphere-title">Courtyard House atmosphere</title>
+  <desc id="atmosphere-desc">A refined final composition where grid, site, structure, material, and light settle into a calm courtyard house atmosphere.</desc>
+  <g id="layer-atmosphere">
+    <rect width="960" height="720" fill="#f4f1eb" fill-opacity=".42"/>
+    <path d="M250 198H730V542H250Z" fill="#8a8174" fill-opacity=".055" stroke="#6f675d" stroke-opacity=".78" stroke-width="2"/>
+    <path d="M370 282H610V456H370Z" fill="#f4f1eb" fill-opacity=".96" stroke="#6f675d" stroke-opacity=".78" stroke-width="2"/>
+    <path d="M370 282H610V456H370Z" fill="#ba9c66" fill-opacity=".08"/>
+    <circle cx="610" cy="282" r="92" fill="#ba9c66" fill-opacity=".18"/>
+    <path d="M278 226H700M278 506H700" stroke="#8a8174" stroke-opacity=".28" stroke-width="1"/>
+    <path d="M390 304H590M390 434H590" stroke="#ba9c66" stroke-opacity=".36" stroke-width="2"/>
+    <path d="M250 542H730" stroke="#1f1d1a" stroke-opacity=".54" stroke-width="2"/>
+  </g>
+</svg>

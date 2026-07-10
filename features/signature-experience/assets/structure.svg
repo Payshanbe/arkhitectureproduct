@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 960 720" role="img" aria-labelledby="structure-title structure-desc">
+  <title id="structure-title">Courtyard House structural order</title>
+  <desc id="structure-desc">Walls, columns, and primary volumes organize the courtyard house around an open center.</desc>
+  <g id="layer-structure" fill="none" stroke="#1f1d1a" stroke-width="2">
+    <path d="M270 220H710V520H270Z"/>
+    <path d="M390 300H590V438H390Z"/>
+    <path d="M270 300H390M590 300H710M270 438H390M590 438H710"/>
+    <path d="M390 220V300M590 220V300M390 438V520M590 438V520"/>
+    <path d="M322 220V520M658 220V520" stroke-opacity=".72"/>
+    <circle cx="322" cy="300" r="8" fill="#1f1d1a" stroke="none"/>
+    <circle cx="658" cy="300" r="8" fill="#1f1d1a" stroke="none"/>
+    <circle cx="322" cy="438" r="8" fill="#1f1d1a" stroke="none"/>
+    <circle cx="658" cy="438" r="8" fill="#1f1d1a" stroke="none"/>
+  </g>
+</svg>
