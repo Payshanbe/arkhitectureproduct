@@ -30,6 +30,13 @@ export const Projects: CollectionConfig = {
     },
     slugField(),
     {
+      name: "tagline",
+      type: "text",
+      admin: {
+        description: "One-line editorial project positioning.",
+      },
+    },
+    {
       name: "category",
       type: "relationship",
       relationTo: "project-categories",
@@ -67,6 +74,17 @@ export const Projects: CollectionConfig = {
       ],
     },
     {
+      name: "buildingType",
+      type: "select",
+      label: "Building Type",
+      options: [
+        { label: "Residential", value: "residential" },
+        { label: "Interior", value: "interior" },
+        { label: "Architecture", value: "architecture" },
+        { label: "Hospitality", value: "hospitality" },
+      ],
+    },
+    {
       name: "services",
       type: "select",
       hasMany: true,
@@ -99,6 +117,10 @@ export const Projects: CollectionConfig = {
       type: "upload",
       relationTo: "media",
       required: true,
+      admin: {
+        description:
+          "Select a project-specific Media item. Replacing the file inside a shared Media item changes every project that references it.",
+      },
     },
     galleryField,
     {
@@ -107,6 +129,13 @@ export const Projects: CollectionConfig = {
       maxLength: 220,
       admin: {
         description: "Short editorial summary for listing and featured project contexts.",
+      },
+    },
+    {
+      name: "summary",
+      type: "textarea",
+      admin: {
+        description: "40-60 word editorial summary for CMS/content planning.",
       },
     },
     {
@@ -126,6 +155,21 @@ export const Projects: CollectionConfig = {
     {
       name: "concept",
       type: "textarea",
+    },
+    {
+      name: "lightingConcept",
+      type: "textarea",
+      label: "Lighting Concept",
+    },
+    {
+      name: "spatialQualities",
+      type: "textarea",
+      label: "Spatial Qualities",
+    },
+    {
+      name: "photographyDirection",
+      type: "textarea",
+      label: "Photography Direction",
     },
     {
       name: "materials",
@@ -157,6 +201,16 @@ export const Projects: CollectionConfig = {
       type: "number",
       defaultValue: 0,
       index: true,
+      admin: {
+        position: "sidebar",
+      },
+    },
+    {
+      name: "relatedProjects",
+      type: "relationship",
+      label: "Related Projects",
+      relationTo: "projects",
+      hasMany: true,
       admin: {
         position: "sidebar",
       },

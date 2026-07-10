@@ -38,7 +38,7 @@ export function Navigation({
     <nav aria-label={label} className={className}>
       <ul
         className={cn(
-          variant === "inline" && "flex items-center gap-8",
+          variant === "inline" && "flex items-center gap-12",
           variant === "menu" && "space-y-4",
         )}
       >
@@ -50,12 +50,9 @@ export function Navigation({
               <Link
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
-                  "group inline-flex text-foreground transition-[color,opacity] duration-base ease-architectural-out hover:text-accent focus-visible:text-accent",
-                  variant === "inline" &&
-                    "text-[length:var(--font-size-ui)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)]",
-                  variant === "menu" &&
-                    "font-display text-[length:clamp(3rem,12vw,8rem)] leading-[0.9] tracking-[var(--letter-spacing-heading)]",
-                  isActive && "text-accent",
+                  "group inline-flex transition-colors duration-base ease-architectural-out",
+                  variant === "inline" && "type-label",
+                  variant === "menu" && "type-display",
                   itemClassName,
                 )}
                 href={item.href}
@@ -63,8 +60,8 @@ export function Navigation({
               >
                 <span
                   className={cn(
-                    "bg-[linear-gradient(currentColor,currentColor)] bg-[length:0%_1px] bg-left-bottom bg-no-repeat transition-[background-size] duration-base ease-architectural-out group-hover:bg-[length:100%_1px] group-focus-visible:bg-[length:100%_1px]",
-                    isActive && "bg-[length:100%_1px]",
+                    "nav-underline",
+                    isActive && "nav-underline--active",
                   )}
                 >
                   {item.label}

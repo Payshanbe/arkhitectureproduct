@@ -87,12 +87,6 @@ async function getArchiveProjects(): Promise<ArchiveProject[]> {
 
 const layoutPatterns = [
   {
-    aspect: "aspect-[4/5] sm:aspect-[16/10] lg:aspect-[16/9]",
-    image: "lg:col-span-9 lg:col-start-4",
-    metadata: "lg:col-span-2",
-    sizes: "(min-width: 1024px) 75vw, 100vw",
-  },
-  {
     aspect: "aspect-[5/4] sm:aspect-[16/9] lg:aspect-[21/10]",
     image: "lg:col-span-10 lg:col-start-2",
     metadata: "lg:col-span-2 lg:col-start-11",
@@ -103,6 +97,12 @@ const layoutPatterns = [
     image: "lg:col-span-6 lg:col-start-2",
     metadata: "lg:col-span-2 lg:col-start-9",
     sizes: "(min-width: 1024px) 50vw, 100vw",
+  },
+  {
+    aspect: "aspect-[4/5] sm:aspect-[16/10] lg:aspect-[16/9]",
+    image: "lg:col-span-9 lg:col-start-4",
+    metadata: "lg:col-span-2",
+    sizes: "(min-width: 1024px) 75vw, 100vw",
   },
   {
     aspect: "aspect-[4/5] sm:aspect-[16/10] lg:aspect-[3/2]",
@@ -123,12 +123,12 @@ export async function WorkArchive() {
             className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]"
             data-work-reveal
           >
-            <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-3">
+            <p className="type-label text-foreground-muted lg:col-span-3">
               Work
             </p>
 
             <div className="lg:col-span-7 lg:col-start-5">
-              <h1 className="font-display text-[length:clamp(3rem,7vw,8rem)] leading-[0.98] tracking-[var(--letter-spacing-heading)] text-balance text-foreground">
+              <h1 className="type-display text-foreground">
                 A considered archive of spaces, materials, and atmosphere.
               </h1>
 
@@ -136,6 +136,12 @@ export async function WorkArchive() {
                 A selection of residential, hospitality, interior, and architectural work shaped
                 through proportion, restraint, and a close reading of place.
               </p>
+
+              {projects.length > 0 ? (
+                <p className="mt-10 type-label text-foreground-muted">
+                  {projects.length} {projects.length === 1 ? "Project" : "Projects"}
+                </p>
+              ) : null}
             </div>
           </div>
         </Container>
@@ -147,7 +153,7 @@ export async function WorkArchive() {
       >
         <Container>
           {projects.length > 0 ? (
-            <div className="space-y-[clamp(var(--space-24),12vw,var(--space-50))]">
+            <div className="space-y-[clamp(var(--space-30),14vw,280px)]">
               {projects.map((project, index) => {
                 const layout = layoutPatterns[index % layoutPatterns.length];
 
@@ -159,41 +165,46 @@ export async function WorkArchive() {
                   >
                     <div
                       className={cn(
-                        "order-2 flex items-start justify-between gap-5 border-t border-border pt-4 text-[length:clamp(0.75rem,0.72rem+0.14vw,0.875rem)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-secondary lg:order-1 lg:block lg:border-t-0 lg:pt-0",
+                        "order-2 flex items-start justify-between gap-5 type-label text-foreground-muted lg:order-1 lg:block",
                         layout.metadata,
                       )}
                     >
-                      <p>{project.category}</p>
-                      <p className="lg:mt-4">{project.location}</p>
-                      <p className="lg:mt-4">{project.year}</p>
+                      <p aria-hidden="true" className="hidden font-display text-[length:var(--font-size-project-title)] leading-none text-foreground lg:block">
+                        {String(index + 1).padStart(2, "0")}
+                      </p>
+                      <p className="lg:mt-6">{project.category}</p>
+                      <p className="lg:mt-3">{project.location}</p>
+                      <p className="lg:mt-3">{project.year}</p>
                     </div>
 
                     <div className={cn("order-1 lg:order-2", layout.image)}>
                       <Link
                         aria-label={`View project: ${project.title}`}
-                        className="group block"
+                        className="plate-link group block"
                         href={project.href}
                       >
                         <div
-                          className={cn("relative overflow-hidden bg-surface", layout.aspect)}
+                          className={cn(
+                            "editorial-image-frame relative overflow-hidden bg-surface",
+                            layout.aspect,
+                          )}
                           data-work-image-frame
                         >
                           <Image
                             alt={project.coverAlt}
-                            className="h-full w-full object-cover transition-[opacity,transform] duration-slow ease-architectural-out group-hover:scale-[1.015] group-hover:opacity-95"
+                            className="image-editorial h-full w-full object-cover transition-[opacity,transform] duration-slow ease-architectural-out group-hover:scale-[1.015] group-hover:opacity-95"
                             data-work-image
                             fill
                             sizes={layout.sizes}
                             src={project.coverSrc}
                           />
                         </div>
-                      </Link>
 
-                      <Link
-                        className="group mt-7 inline-flex font-display text-[length:clamp(2.25rem,5vw,5.75rem)] leading-[0.96] tracking-[var(--letter-spacing-heading)] text-balance text-foreground transition-colors duration-base ease-architectural-out hover:text-accent focus-visible:text-accent lg:mt-8"
-                        href={project.href}
-                      >
-                        {project.title}
+                        <div className="mt-5 border-t border-border/60 pt-4">
+                          <h2 className="type-project-title text-foreground">
+                            <span className="plate-link-underline">{project.title}</span>
+                          </h2>
+                        </div>
                       </Link>
                     </div>
                   </article>
@@ -205,7 +216,7 @@ export async function WorkArchive() {
               className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]"
               data-work-reveal
             >
-              <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-3">
+              <p className="type-label text-foreground-muted lg:col-span-3">
                 Archive
               </p>
 

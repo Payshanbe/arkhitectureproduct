@@ -12,6 +12,8 @@ export function Header() {
   const menuId = useId();
   const pathname = usePathname();
   const previousPathname = useRef(pathname);
+  const [hasScrolled, setHasScrolled] = useState(false);
+  const [isOverDarkHero, setIsOverDarkHero] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const closeMenu = useCallback(() => {
@@ -34,22 +36,72 @@ export function Header() {
     };
   }, [pathname]);
 
+  useEffect(() => {
+    const updateScrollState = () => {
+      setHasScrolled(window.scrollY > 24);
+    };
+
+    updateScrollState();
+    window.addEventListener("scroll", updateScrollState, { passive: true });
+
+    return () => {
+      window.removeEventListener("scroll", updateScrollState);
+    };
+  }, []);
+
+  useEffect(() => {
+    const hero = document.querySelector<HTMLElement>("[data-hero-theme='dark']");
+
+    if (!hero) {
+      setIsOverDarkHero(false);
+      return;
+    }
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsOverDarkHero(entry?.isIntersecting ?? false);
+      },
+      // The header only cares about the top band of the viewport.
+      { rootMargin: "0px 0px -88% 0px" },
+    );
+
+    observer.observe(hero);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [pathname]);
+
+  const navTheme = isOverDarkHero ? "dark" : "light";
+
   return (
     <>
-      <header className="fixed left-0 right-0 top-0 z-header px-[var(--container-padding)] py-6 text-foreground">
-        <div className="flex items-center justify-between gap-8">
+      <header className="fixed left-0 right-0 top-0 z-header px-[var(--container-padding)] py-4 text-foreground sm:py-5">
+        <div
+          className={[
+            "nav-shell mx-auto flex w-full max-w-[var(--container-max)] items-center justify-between gap-6 rounded-[4px] px-4 py-3 sm:px-7 sm:py-3.5 lg:gap-12",
+            hasScrolled && "nav-shell--scrolled",
+          ]
+            .filter(Boolean)
+            .join(" ")}
+          data-scrolled={hasScrolled ? "true" : "false"}
+          data-nav-theme={navTheme}
+        >
           <Link
-            className="text-[length:var(--font-size-ui)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] transition-colors duration-base ease-architectural-out hover:text-accent focus-visible:text-accent"
+            className="nav-link nav-text nav-wordmark uppercase leading-[var(--line-height-ui)] transition-colors duration-base ease-architectural-out"
             href="/"
             onClick={closeMenu}
           >
             Arkhitecture
           </Link>
 
-          <Navigation className="hidden lg:block" />
+          <Navigation
+            className="hidden lg:block"
+            itemClassName="nav-link nav-text"
+          />
 
           <MenuButton
-            className="lg:hidden"
+            className="nav-link nav-text lg:hidden"
             controlsId={menuId}
             isOpen={isMenuOpen}
             onClick={() => {

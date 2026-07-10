@@ -15,11 +15,11 @@ export function SignatureExperienceAnimatedPrototype() {
         >
           <Container>
             <div className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-              <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-3">
+              <p className="type-label text-foreground-muted lg:col-span-3">
                 Prototype
               </p>
               <div className="lg:col-span-7 lg:col-start-5">
-                <h1 className="font-display text-[length:clamp(3rem,7vw,8rem)] leading-[0.98] tracking-[var(--letter-spacing-heading)] text-balance text-foreground">
+                <h1 className="type-display text-foreground">
                   Signature process experience.
                 </h1>
                 <p className="mt-8 max-w-[680px] text-pretty text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground-secondary">

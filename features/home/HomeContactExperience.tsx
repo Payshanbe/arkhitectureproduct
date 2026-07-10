@@ -4,60 +4,65 @@ import { EditorialStatement } from "@/components/typography/EditorialStatement";
 import { HomeContactExperienceMotion } from "@/features/home/HomeContactExperienceMotion";
 
 const contactEmail = "studio@arkhitecture.com";
+const studioInfo = [
+  {
+    label: "Email",
+    value: contactEmail,
+  },
+  {
+    label: "Phone",
+    value: "+1 555 123 4567",
+  },
+  {
+    label: "Location",
+    value: "Tashkent, Uzbekistan",
+  },
+];
 
 export function HomeContactExperience() {
   return (
-    <Section className="bg-background" spacing="large">
+    <Section className="bg-background py-[clamp(var(--space-20),8vw,var(--space-30))]" spacing="none">
       <HomeContactExperienceMotion>
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p
-              className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-2"
-              data-contact-experience-reveal
-            >
-              Contact
-            </p>
+            <div className="flex items-center gap-8 lg:col-span-3" data-contact-experience-reveal>
+              <p className="type-label text-foreground-muted">
+                Let&apos;s Connect
+              </p>
+              <span className="hidden h-px flex-1 bg-border lg:block" aria-hidden="true" />
+            </div>
 
-            <div className="lg:col-span-9 lg:col-start-4">
+            <div className="lg:col-span-6 lg:col-start-5">
               <EditorialStatement
                 as="h2"
-                className="text-[length:clamp(2.75rem,7vw,8rem)]"
+                className="max-w-[560px]"
                 data-contact-experience-reveal
               >
                 Begin with a conversation about place, atmosphere, and what should endure.
               </EditorialStatement>
 
-              <div className="mt-10 grid gap-8 lg:grid-cols-9 lg:gap-[var(--grid-gap)]">
-                <p
-                  className="text-pretty text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground-secondary lg:col-span-5"
-                  data-contact-experience-reveal
+              <p
+                className="mt-7 max-w-[420px] text-pretty type-body text-foreground-secondary"
+                data-contact-experience-reveal
+              >
+                For residences, interiors, and architectural collaborations, send a brief note
+                and we will reply with a considered next step.
+              </p>
+
+              <div className="mt-[clamp(var(--space-12),5vw,var(--space-16))]" data-contact-experience-reveal>
+                <a
+                  className="plate-link inline-flex font-display text-[length:clamp(1.25rem,2.2vw,2rem)] leading-[1.2] tracking-[-0.015em] text-foreground [overflow-wrap:anywhere]"
+                  href={`mailto:${contactEmail}?subject=Project%20Inquiry`}
                 >
-                  For residences, interiors, and architectural collaborations, send a brief note
-                  and we will reply with a considered next step.
+                  <span className="plate-link-underline">{contactEmail}</span>
+                </a>
+
+                <p className="mt-5 type-label text-foreground-muted">
+                  {studioInfo
+                    .filter((item) => item.label !== "Email")
+                    .map((item) => item.value)
+                    .join(" · ")}
                 </p>
-
-                <div
-                  className="flex flex-col items-start gap-5 lg:col-span-3 lg:col-start-7"
-                  data-contact-experience-reveal
-                >
-                  <a
-                    className="group inline-flex text-[length:var(--font-size-ui)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] text-foreground transition-colors duration-base ease-architectural-out hover:text-accent focus-visible:text-accent"
-                    href={`mailto:${contactEmail}`}
-                  >
-                    <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:100%_1px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-base ease-architectural-out group-hover:bg-[length:0%_1px] group-focus-visible:bg-[length:0%_1px]">
-                      {contactEmail}
-                    </span>
-                  </a>
-
-                  <a
-                    className="group inline-flex text-[length:var(--font-size-ui)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] text-foreground transition-colors duration-base ease-architectural-out hover:text-accent focus-visible:text-accent"
-                    href={`mailto:${contactEmail}?subject=Project%20Inquiry`}
-                  >
-                    <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:100%_1px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-base ease-architectural-out group-hover:bg-[length:0%_1px] group-focus-visible:bg-[length:0%_1px]">
-                      Start a project
-                    </span>
-                  </a>
-                </div>
               </div>
             </div>
           </div>

@@ -116,76 +116,80 @@ export async function HomeFeaturedProject() {
   const project = await getFeaturedProject();
 
   return (
-    <Section className="bg-background" spacing="large">
+    <Section className="bg-background py-[clamp(var(--space-20),8vw,var(--space-30))]" spacing="none">
       <HomeFeaturedProjectMotion>
         <Container>
-          <div className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p
-              className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-3"
-              data-featured-project-text
-            >
-              Featured Project
-            </p>
-            <div className="lg:col-span-7 lg:col-start-5" data-featured-project-text>
-              <h2 className="font-display text-[length:var(--font-size-heading)] leading-[var(--line-height-heading)] tracking-[var(--letter-spacing-heading)] text-balance text-foreground">
+          <div className="grid gap-8 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
+            <div className="flex items-center gap-8 lg:col-span-3" data-featured-project-text>
+              <p className="type-label text-foreground-muted">
+                Featured Project
+              </p>
+              <span className="hidden h-px flex-1 bg-border lg:block" aria-hidden="true" />
+            </div>
+            <div className="lg:col-span-4 lg:col-start-5" data-featured-project-text>
+              <h2 className="type-section-heading text-foreground">
                 A slower look at one selected work.
               </h2>
             </div>
           </div>
 
-          <article className="mt-[clamp(var(--space-20),11vw,var(--space-40))]">
+        </Container>
+
+        <article className="mt-[clamp(var(--space-12),6vw,var(--space-20))]">
+          <Link aria-label={`View project: ${project.title}`} className="group block" href={project.href}>
             <div
-              className="relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-[16/10] lg:min-h-[72svh] lg:aspect-auto"
+              className="editorial-image-frame relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-[16/9] lg:aspect-[21/9]"
               data-featured-project-image-frame
             >
               <Image
                 alt={project.coverAlt}
-                className="h-full w-full object-cover"
+                className="image-editorial h-full w-full object-cover transition-transform duration-slow ease-architectural-out group-hover:scale-[1.01]"
                 data-featured-project-image
                 fill
                 sizes="100vw"
                 src={project.coverSrc}
               />
             </div>
+          </Link>
 
-            <div className="mt-10 grid gap-8 lg:mt-12 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
+          <Container as="div" className="mt-7 lg:mt-8">
+            <div className="grid gap-8 border-t border-border/60 pt-5 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
               <div
-                className="flex items-start justify-between gap-6 border-t border-border pt-4 text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-3 lg:block lg:border-t-0 lg:pt-0"
+                className="flex items-start justify-between gap-6 type-label text-foreground-muted lg:col-span-3 lg:block"
                 data-featured-project-text
               >
                 <p>{project.category}</p>
-                <p className="lg:mt-3">{project.location}</p>
-                <p className="lg:mt-3">{project.year}</p>
+                <p className="lg:mt-2">{project.location}</p>
+                <p className="lg:mt-2">{project.year}</p>
               </div>
 
-              <div className="lg:col-span-7 lg:col-start-5">
+              <div className="lg:col-span-5 lg:col-start-5">
                 <h3
-                  className="font-display text-[length:clamp(3rem,7vw,8.25rem)] leading-[0.94] tracking-[var(--letter-spacing-heading)] text-balance text-foreground"
+                  className="type-project-title text-foreground"
                   data-featured-project-text
                 >
                   {project.title}
                 </h3>
 
                 <p
-                  className="mt-8 max-w-[620px] text-pretty text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground-secondary lg:mt-10"
+                  className="mt-5 max-w-[420px] text-pretty type-body text-foreground-secondary"
                   data-featured-project-text
                 >
                   {project.excerpt}
                 </p>
+              </div>
 
+              <div className="lg:col-span-2 lg:col-start-11 lg:text-right" data-featured-project-text>
                 <Link
-                  className="group mt-10 inline-flex text-[length:var(--font-size-ui)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] text-foreground transition-colors duration-base ease-architectural-out hover:text-accent focus-visible:text-accent"
-                  data-featured-project-text
+                  className="plate-link inline-flex type-label text-foreground"
                   href={project.href}
                 >
-                  <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:100%_1px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-base ease-architectural-out group-hover:bg-[length:0%_1px] group-focus-visible:bg-[length:0%_1px]">
-                    View Project
-                  </span>
+                  <span className="plate-link-underline">View Project &rarr;</span>
                 </Link>
               </div>
             </div>
-          </article>
-        </Container>
+          </Container>
+        </article>
       </HomeFeaturedProjectMotion>
     </Section>
   );

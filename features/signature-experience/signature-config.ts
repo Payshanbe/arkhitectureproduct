@@ -71,7 +71,7 @@ export const signatureScenes: Scene[] = [
   {
     description:
       "We begin by listening to the brief, the site, and the quiet rituals that will shape the work.",
-    durationVh: 85,
+    durationVh: 76,
     id: "research",
     index: "01",
     layerIds: ["grid", "site"],
@@ -82,7 +82,7 @@ export const signatureScenes: Scene[] = [
   {
     description:
       "Existing conditions, orientation, climate, and daily movement define the first limits of the project.",
-    durationVh: 80,
+    durationVh: 78,
     id: "context",
     index: "02",
     layerIds: ["grid", "site", "envelope"],
@@ -93,7 +93,7 @@ export const signatureScenes: Scene[] = [
   {
     description:
       "Proportion, circulation, and order turn early observations into a spatial framework.",
-    durationVh: 90,
+    durationVh: 84,
     id: "structure",
     index: "03",
     layerIds: ["grid", "site", "envelope", "structure"],
@@ -104,7 +104,7 @@ export const signatureScenes: Scene[] = [
   {
     description:
       "Surfaces are chosen for touch, ageing, restraint, and their relationship to light.",
-    durationVh: 95,
+    durationVh: 88,
     id: "material",
     index: "04",
     layerIds: ["grid", "envelope", "structure", "materials"],
@@ -115,7 +115,7 @@ export const signatureScenes: Scene[] = [
   {
     description:
       "Light is composed as part of the architecture, shaping rhythm, depth, and stillness.",
-    durationVh: 110,
+    durationVh: 98,
     id: "light",
     index: "05",
     layerIds: ["grid", "envelope", "structure", "materials", "light"],
@@ -126,7 +126,7 @@ export const signatureScenes: Scene[] = [
   {
     description:
       "The final space is measured by how calmly it supports life, movement, and memory.",
-    durationVh: 100,
+    durationVh: 88,
     id: "atmosphere",
     index: "06",
     layerIds: ["grid", "envelope", "structure", "materials", "light", "atmosphere"],
@@ -138,7 +138,7 @@ export const signatureScenes: Scene[] = [
 
 export const signatureTiming: SignatureTiming = {
   anticipatePin: 1,
-  scrub: 0.8,
+  scrub: 0.95,
   totalDurationVh: signatureScenes.reduce((total, scene) => total + scene.durationVh, 0),
 };
 
@@ -163,4 +163,3 @@ export const signatureConfig = {
   scenes: signatureScenes,
   timing: signatureTiming,
 } as const;
-

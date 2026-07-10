@@ -1,4 +1,4 @@
-import { gsap } from "@/animations/gsap";
+import { gsap, initGSAP } from "@/animations/gsap";
 import type { MotionTarget, ScrollMotionOptions } from "@/animations/types";
 import { defaultScrollTrigger, prefersReducedMotion } from "@/animations/utils";
 
@@ -17,6 +17,8 @@ export function imageReveal(target: MotionTarget, options: ImageRevealOptions = 
     scaleFrom = 1.04,
     scrollTrigger,
   } = options;
+
+  initGSAP();
 
   const timeline = gsap.timeline({
     delay,

@@ -45,7 +45,7 @@ export function StudioPage() {
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
             <p
-              className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-2"
+              className="type-label text-foreground-muted lg:col-span-2"
               data-studio-reveal
             >
               Studio
@@ -53,7 +53,7 @@ export function StudioPage() {
 
             <EditorialStatement
               as="h1"
-              className="text-[length:clamp(3rem,7vw,8rem)] lg:col-span-9 lg:col-start-4"
+              className="type-display lg:col-span-9 lg:col-start-4"
               data-studio-reveal
             >
               We design spaces through atmosphere, restraint, and a careful reading of context.
@@ -66,33 +66,59 @@ export function StudioPage() {
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
             <p
-              className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-2"
+              className="type-label text-foreground-muted lg:col-span-2"
               data-studio-reveal
             >
               Philosophy
             </p>
 
-            <div className="space-y-8 lg:col-span-7 lg:col-start-5" data-studio-reveal>
-              {philosophyText.map((paragraph) => (
-                <p
-                  className="text-pretty text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground-secondary"
-                  key={paragraph}
-                >
-                  {paragraph}
-                </p>
-              ))}
+            <div className="lg:col-span-7 lg:col-start-5" data-studio-reveal>
+              {philosophyText.map((paragraph, index) =>
+                index === 0 ? (
+                  <p className="type-statement text-foreground" key={paragraph}>
+                    {paragraph}
+                  </p>
+                ) : (
+                  <p
+                    className="mt-8 max-w-[620px] text-pretty text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground-secondary lg:mt-10"
+                    key={paragraph}
+                  >
+                    {paragraph}
+                  </p>
+                ),
+              )}
             </div>
+          </div>
+        </Container>
+      </Section>
+
+      <Section className="bg-background-secondary pb-0" spacing="large">
+        <Container>
+          <div className="grid gap-10 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
+            <p
+              className="type-label text-foreground-muted lg:col-span-2"
+              data-studio-reveal
+            >
+              The Process
+            </p>
+
+            <p
+              className="max-w-[720px] type-statement text-foreground lg:col-span-8 lg:col-start-4"
+              data-studio-reveal
+            >
+              Six layers, from first trace to atmosphere. How every project is drawn into being.
+            </p>
           </div>
         </Container>
       </Section>
 
       <SignatureExperienceSection />
 
-      <Section className="bg-background-secondary" spacing="large">
+      <Section className="bg-background" spacing="large">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
             <p
-              className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-2"
+              className="type-label text-foreground-muted lg:col-span-2"
               data-studio-reveal
             >
               Principles
@@ -104,7 +130,7 @@ export function StudioPage() {
                   className="grid grid-cols-[3ch_1fr] gap-5 border-t border-border pt-5 text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground"
                   key={principle}
                 >
-                  <span className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+                  <span className="type-label text-foreground-muted">
                     {String(index + 1).padStart(2, "0")}
                   </span>
                   <span>{principle}</span>
@@ -119,7 +145,7 @@ export function StudioPage() {
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
             <p
-              className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-2"
+              className="type-label text-foreground-muted lg:col-span-2"
               data-studio-reveal
             >
               Information
@@ -128,7 +154,7 @@ export function StudioPage() {
             <dl className="grid gap-8 md:grid-cols-3 lg:col-span-9 lg:col-start-4 lg:gap-[var(--grid-gap)]">
               {studioInfo.map((item) => (
                 <div className="border-t border-border pt-5" data-studio-reveal key={item.label}>
-                  <dt className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+                  <dt className="type-label text-foreground-muted">
                     {item.label}
                   </dt>
                   <dd className="mt-5 text-pretty text-[length:var(--font-size-body)] leading-[var(--line-height-body)] text-foreground-secondary">
@@ -147,17 +173,17 @@ export function StudioPage() {
             className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]"
             data-studio-reveal
           >
-            <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-3">
+            <p className="type-label text-foreground-muted lg:col-span-3">
               Contact
             </p>
 
             <div className="lg:col-span-7 lg:col-start-5">
-              <h2 className="font-display text-[length:clamp(2.75rem,6vw,7rem)] leading-[0.98] tracking-[var(--letter-spacing-heading)] text-balance text-foreground">
+              <h2 className="type-section-heading text-foreground">
                 Begin with a place, a question, or a quiet ambition for how a space should feel.
               </h2>
 
               <Link
-                className="group mt-10 inline-flex text-[length:var(--font-size-ui)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] text-foreground transition-colors duration-base ease-architectural-out hover:text-accent focus-visible:text-accent"
+                className="group mt-10 inline-flex text-[length:var(--font-size-ui)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] text-foreground transition-opacity duration-base ease-architectural-out hover:opacity-65 focus-visible:text-accent"
                 href="mailto:studio@arkhitecture.com?subject=Studio%20Inquiry"
               >
                 <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:100%_1px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-base ease-architectural-out group-hover:bg-[length:0%_1px] group-focus-visible:bg-[length:0%_1px]">

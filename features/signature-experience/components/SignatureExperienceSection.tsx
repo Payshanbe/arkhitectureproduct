@@ -113,7 +113,7 @@ export function SignatureExperienceSection() {
       gsap.set(layerElements, {
         autoAlpha: 0,
         transformOrigin: "50% 50%",
-        y: 12,
+        y: 8,
       });
       gsap.set(getLayerElement(pin, "grid"), {
         autoAlpha: 1,
@@ -153,8 +153,8 @@ export function SignatureExperienceSection() {
 
         if (sceneIndex > 0) {
           timeline
-            .to(copyPanels[sceneIndex - 1], { autoAlpha: 0, duration: 0.36, y: -14 }, position - 0.12)
-            .to(copyPanels[sceneIndex], { autoAlpha: 1, duration: 0.62, y: 0 }, position + 0.02);
+            .to(copyPanels[sceneIndex - 1], { autoAlpha: 0, duration: 0.46, y: -10 }, position - 0.16)
+            .to(copyPanels[sceneIndex], { autoAlpha: 1, duration: 0.76, y: 0 }, position + 0.02);
         }
 
         animation.enter.targetLayers.forEach((layerId) => {
@@ -189,7 +189,7 @@ export function SignatureExperienceSection() {
         <Container className="flex min-h-svh items-center py-[var(--section-spacing-medium)]">
           <div className="grid w-full items-center gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
             <div className="lg:col-span-4">
-              <p className="mb-6 text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+              <p className="mb-6 type-label text-foreground-muted">
                 Process
               </p>
               <div className="relative min-h-[320px]">
@@ -200,11 +200,11 @@ export function SignatureExperienceSection() {
                     key={scene.id}
                     style={{ opacity: index === 0 ? 1 : 0 }}
                   >
-                    <p className="mb-5 text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+                    <p className="mb-5 type-label text-foreground-muted">
                       {scene.index}
                     </p>
                     <h2
-                      className="font-display text-[length:clamp(3.5rem,7vw,7.5rem)] leading-[0.95] tracking-[var(--letter-spacing-heading)] text-foreground"
+                      className="type-display text-foreground"
                       id={index === 0 ? "signature-process-title" : undefined}
                     >
                       {scene.title}
@@ -221,8 +221,10 @@ export function SignatureExperienceSection() {
                   <li key={scene.id}>
                     <span
                       className={cn(
-                        "block h-px w-8 bg-border transition-[background-color,opacity] duration-base ease-architectural-out",
-                        index <= activeSceneIndex ? "opacity-100" : "opacity-35",
+                        "block h-px w-12 transition-[background-color,opacity] duration-slow ease-architectural-out",
+                        index <= activeSceneIndex
+                          ? "bg-[var(--color-text-secondary)] opacity-90"
+                          : "bg-border opacity-45",
                       )}
                     />
                     <span className="sr-only">
@@ -242,7 +244,7 @@ export function SignatureExperienceSection() {
             </div>
 
             <div className="lg:col-span-8">
-              <div className="relative aspect-[4/3] overflow-hidden border border-border bg-background">
+              <div className="relative aspect-[4/3] overflow-hidden bg-background lg:mr-[calc(var(--container-padding)*-1)]">
                 <SignatureDrawing animated />
               </div>
             </div>
@@ -253,10 +255,10 @@ export function SignatureExperienceSection() {
       <section className="signature-prototype-static bg-background-secondary py-[var(--section-spacing-large)]">
         <Container>
           <div className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-3">
+            <p className="type-label text-foreground-muted lg:col-span-3">
               Process
             </p>
-            <div className="space-y-16 lg:col-span-7 lg:col-start-5">
+              <div className="space-y-20 lg:col-span-7 lg:col-start-5">
               {scenes.map((scene) => {
                 const layerStates = getLayerStatesForScene(layers, scene);
                 const visibleLayerIds = layerStates
@@ -265,19 +267,19 @@ export function SignatureExperienceSection() {
 
                 return (
                   <article className="grid gap-6 border-t border-border pt-5" key={scene.id}>
-                    <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+                    <p className="type-label text-foreground-muted">
                       {scene.index}
                     </p>
                     <div>
-                      <h2 className="font-display text-[length:clamp(2.75rem,10vw,5.5rem)] leading-[0.98] tracking-[var(--letter-spacing-heading)] text-foreground">
+                      <h2 className="type-section-heading text-foreground">
                         {scene.title}
                       </h2>
                       <p className="mt-5 max-w-[620px] text-pretty text-[length:var(--font-size-body)] leading-[var(--line-height-body)] text-foreground-secondary">
                         {scene.description}
                       </p>
-                      <div className="mt-8 aspect-[4/3] overflow-hidden border border-border bg-background">
-                        <SignatureDrawing visibleLayerIds={visibleLayerIds} />
-                      </div>
+                        <div className="mt-8 aspect-[4/3] max-w-[680px] overflow-hidden bg-background">
+                          <SignatureDrawing visibleLayerIds={visibleLayerIds} />
+                        </div>
                     </div>
                   </article>
                 );
@@ -289,4 +291,3 @@ export function SignatureExperienceSection() {
     </div>
   );
 }
-

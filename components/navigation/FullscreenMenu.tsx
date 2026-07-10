@@ -143,17 +143,17 @@ export function FullscreenMenu({ id, isOpen, onClose }: FullscreenMenuProps) {
       <div
         aria-modal="true"
         aria-label="Site navigation"
-        className="relative min-h-svh bg-background px-[var(--container-padding)] py-6 text-foreground"
+        className="nav-panel relative min-h-svh px-[var(--container-padding)] py-5 text-foreground sm:py-6"
         ref={panelRef}
         role="dialog"
       >
         <div className="flex min-h-[calc(100svh-48px)] flex-col justify-between gap-16">
-          <div className="flex items-start justify-between">
-            <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+          <div className="nav-menu-topbar flex items-center justify-between rounded-[4px] px-4 py-3 sm:px-7 sm:py-3.5">
+            <p className="type-label text-foreground-muted">
               Navigation
             </p>
             <button
-              className="min-h-11 text-[length:var(--font-size-ui)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] text-foreground transition-colors duration-base ease-architectural-out hover:text-accent focus-visible:text-accent"
+              className="nav-link nav-text min-h-11 uppercase leading-[var(--line-height-ui)] transition-colors duration-base ease-architectural-out"
               type="button"
               onClick={onClose}
             >

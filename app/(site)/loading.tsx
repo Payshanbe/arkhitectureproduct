@@ -11,11 +11,11 @@ export default function Loading() {
       >
         <Container>
           <div className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-3">
+            <p className="type-label text-foreground-muted lg:col-span-3">
               Loading
             </p>
             <div className="lg:col-span-7 lg:col-start-5">
-              <p className="font-display text-[length:clamp(3rem,7vw,8rem)] leading-[0.98] tracking-[var(--letter-spacing-heading)] text-balance text-foreground">
+              <p className="type-display text-foreground">
                 Preparing the next view.
               </p>
             </div>

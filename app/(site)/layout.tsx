@@ -13,13 +13,14 @@ import "../globals.css";
 
 const display = Cormorant_Garamond({
   subsets: ["latin", "cyrillic"],
+  weight: ["500"],
   variable: "--font-display",
   display: "swap",
 });
 
 const sans = Inter({
   subsets: ["latin", "cyrillic"],
-  variable: "--font-sans",
+  variable: "--font-body",
   display: "swap",
 });
 
@@ -38,7 +39,7 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body>
         <a
-          className="fixed left-[var(--container-padding)] top-4 z-overlay -translate-y-24 bg-background px-4 py-3 text-[length:var(--font-size-ui)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] text-foreground shadow-sm transition-transform duration-base ease-architectural-out focus-visible:translate-y-0"
+          className="fixed left-[var(--container-padding)] top-4 z-overlay -translate-y-24 bg-background px-4 py-3 type-label text-foreground shadow-sm transition-transform duration-base ease-architectural-out focus-visible:translate-y-0"
           href="#main-content"
         >
           Skip to content

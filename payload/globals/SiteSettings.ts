@@ -25,6 +25,24 @@ export const SiteSettings: GlobalConfig = {
       type: "textarea",
     },
     {
+      name: "studioDescription",
+      type: "textarea",
+      admin: {
+        description: "Editorial studio description for future global/page content integration.",
+      },
+    },
+    {
+      name: "footerDescription",
+      type: "textarea",
+      admin: {
+        description: "Short footer studio description.",
+      },
+    },
+    {
+      name: "copyright",
+      type: "text",
+    },
+    {
       name: "logo",
       type: "upload",
       relationTo: "media",

@@ -27,12 +27,12 @@ export function SectionHeading({
       {...props}
     >
       {eyebrow ? (
-        <p className="mb-4 font-sans text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+        <p className="mb-4 font-sans type-label text-foreground-muted">
           {eyebrow}
         </p>
       ) : null}
 
-      <Heading className="font-display text-[length:var(--font-size-heading)] leading-[var(--line-height-heading)] tracking-[var(--letter-spacing-heading)] text-balance text-foreground">
+      <Heading className="type-section-heading text-foreground">
         {title}
       </Heading>
 

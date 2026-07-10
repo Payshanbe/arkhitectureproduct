@@ -16,11 +16,11 @@ export function sectionReveal(target: MotionTarget, options: SectionRevealOption
     y = 24,
   } = options;
 
+  initGSAP();
+
   if (prefersReducedMotion(reducedMotion)) {
     return gsap.set(target, { autoAlpha: 1, y: 0 });
   }
-
-  initGSAP();
 
   return gsap.fromTo(
     target,

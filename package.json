@@ -13,7 +13,7 @@
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
     "payload": "payload",
-    "seed": "payload run scripts/seed.ts",
+    "seed": "payload run scripts/seed-flagship.ts",
     "migrate": "payload migrate",
     "migrate:create": "payload migrate:create",
     "migrate:down": "payload migrate:down",

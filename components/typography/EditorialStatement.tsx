@@ -18,7 +18,7 @@ export function EditorialStatement({
   return (
     <Component
       className={cn(
-        "max-w-[var(--statement-width)] font-display text-[length:var(--font-size-statement)] leading-[var(--line-height-statement)] text-balance text-foreground",
+        "max-w-[var(--statement-width)] type-statement text-foreground",
         className,
       )}
       {...props}
@@ -26,7 +26,7 @@ export function EditorialStatement({
       {children}
 
       {attribution ? (
-        <footer className="mt-8 font-sans text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+        <footer className="mt-8 font-sans type-label text-foreground-muted">
           {attribution}
         </footer>
       ) : null}

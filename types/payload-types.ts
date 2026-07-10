@@ -218,6 +218,10 @@ export interface Project {
   id: number;
   title: string;
   slug: string;
+  /**
+   * One-line editorial project positioning.
+   */
+  tagline?: string | null;
   category: number | ProjectCategory;
   /**
    * Legacy display location. Prefer City and Country for new content.
@@ -227,14 +231,21 @@ export interface Project {
   country?: string | null;
   year?: number | null;
   status?: ('built' | 'concept' | 'in-progress' | 'completed') | null;
+  buildingType?: ('residential' | 'interior' | 'architecture' | 'hospitality') | null;
   services?: ('architecture' | 'interior-design' | 'master-planning' | 'furniture-design' | 'landscape')[] | null;
   area?: string | null;
   architect?: string | null;
   client?: string | null;
   photographer?: string | null;
+  /**
+   * Select a project-specific Media item. Replacing the file inside a shared Media item changes every project that references it.
+   */
   coverImage: number | Media;
   gallery?:
     | {
+        /**
+         * Use a unique Media item for each gallery image. Replacing a shared Media file updates every field that references it.
+         */
         image: number | Media;
         caption?: string | null;
         altText?: string | null;
@@ -248,6 +259,10 @@ export interface Project {
    */
   excerpt?: string | null;
   /**
+   * 40-60 word editorial summary for CMS/content planning.
+   */
+  summary?: string | null;
+  /**
    * Longer project description for future project detail pages.
    */
   description?: string | null;
@@ -256,11 +271,15 @@ export interface Project {
    */
   shortDescription?: string | null;
   concept?: string | null;
+  lightingConcept?: string | null;
+  spatialQualities?: string | null;
+  photographyDirection?: string | null;
   materials?: string | null;
   credits?: string | null;
   featured?: boolean | null;
   published?: boolean | null;
   order?: number | null;
+  relatedProjects?: (number | Project)[] | null;
   seo?: {
     title?: string | null;
     description?: string | null;
@@ -441,12 +460,14 @@ export interface ProjectCategoriesSelect<T extends boolean = true> {
 export interface ProjectsSelect<T extends boolean = true> {
   title?: T;
   slug?: T;
+  tagline?: T;
   category?: T;
   location?: T;
   city?: T;
   country?: T;
   year?: T;
   status?: T;
+  buildingType?: T;
   services?: T;
   area?: T;
   architect?: T;
@@ -464,14 +485,19 @@ export interface ProjectsSelect<T extends boolean = true> {
         id?: T;
       };
   excerpt?: T;
+  summary?: T;
   description?: T;
   shortDescription?: T;
   concept?: T;
+  lightingConcept?: T;
+  spatialQualities?: T;
+  photographyDirection?: T;
   materials?: T;
   credits?: T;
   featured?: T;
   published?: T;
   order?: T;
+  relatedProjects?: T;
   seo?:
     | T
     | {
@@ -534,6 +560,15 @@ export interface SiteSetting {
   siteName: string;
   tagline?: string | null;
   siteDescription?: string | null;
+  /**
+   * Editorial studio description for future global/page content integration.
+   */
+  studioDescription?: string | null;
+  /**
+   * Short footer studio description.
+   */
+  footerDescription?: string | null;
+  copyright?: string | null;
   logo?: (number | null) | Media;
   favicon?: (number | null) | Media;
   seo?: {
@@ -609,6 +644,9 @@ export interface SiteSettingsSelect<T extends boolean = true> {
   siteName?: T;
   tagline?: T;
   siteDescription?: T;
+  studioDescription?: T;
+  footerDescription?: T;
+  copyright?: T;
   logo?: T;
   favicon?: T;
   seo?:

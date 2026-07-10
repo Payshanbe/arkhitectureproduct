@@ -2,17 +2,13 @@ import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/dist/ScrollTrigger";
 
-let registered = false;
-
 export function initGSAP() {
   if (typeof window === "undefined") {
     return;
   }
 
-  if (registered) {
-    return;
-  }
-
+  // GSAP registration is idempotent. Re-registering on the client keeps
+  // ScrollTrigger available after Next.js Fast Refresh or route remounts.
   gsap.registerPlugin(ScrollTrigger, useGSAP);
 
   const core = gsap.core as unknown as {
@@ -24,8 +20,6 @@ export function initGSAP() {
   ScrollTrigger.config({
     ignoreMobileResize: true,
   });
-
-  registered = true;
 }
 
 export { gsap, ScrollTrigger, useGSAP };

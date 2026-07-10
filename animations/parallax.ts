@@ -1,4 +1,4 @@
-import { gsap } from "@/animations/gsap";
+import { gsap, initGSAP } from "@/animations/gsap";
 import type { MotionTarget, ScrollMotionOptions } from "@/animations/types";
 import { defaultScrollTrigger, prefersReducedMotion } from "@/animations/utils";
 
@@ -18,6 +18,8 @@ export function parallax(target: MotionTarget, options: ParallaxOptions = {}) {
     scrub = true,
     toYPercent = -8,
   } = options;
+
+  initGSAP();
 
   if (prefersReducedMotion(reducedMotion)) {
     return gsap.set(target, { yPercent: 0 });

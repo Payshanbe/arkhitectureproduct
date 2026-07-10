@@ -247,7 +247,7 @@ function DetailItem({ label, value }: { label: string; value?: string | string[]
 
   return (
     <div className="border-t border-border pt-4">
-      <dt className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+      <dt className="type-label text-foreground-muted">
         {label}
       </dt>
       <dd className="mt-3 text-pretty text-[length:var(--font-size-body)] leading-[var(--line-height-body)] text-foreground">
@@ -259,11 +259,37 @@ function DetailItem({ label, value }: { label: string; value?: string | string[]
 
 function ProjectHero({ project }: { project: NormalizedProject }) {
   return (
-    <Section className="relative min-h-[90svh] overflow-hidden py-0" spacing="none">
-      <div className="absolute inset-0" data-project-detail-image-frame>
+    <Section
+      className="bg-background pt-[calc(var(--section-spacing-large)+var(--space-20))]"
+      spacing="none"
+    >
+      <Container>
+        <div className="grid gap-8 lg:grid-cols-12 lg:gap-[var(--grid-gap)]" data-project-detail-reveal>
+          <p className="type-label text-foreground-muted lg:col-span-2">
+            {project.category}
+          </p>
+
+          <h1 className="max-w-[900px] type-display text-foreground lg:col-span-9 lg:col-start-4">
+            {project.title}
+          </h1>
+        </div>
+
+        <div
+          className="mt-[clamp(var(--space-12),5vw,var(--space-16))] flex flex-wrap items-baseline justify-between gap-x-10 gap-y-2 border-t border-border pt-4 type-label text-foreground-muted"
+          data-project-detail-reveal
+        >
+          <p>{project.location}</p>
+          <p>{project.year}</p>
+        </div>
+      </Container>
+
+      <div
+        className="relative mt-[clamp(var(--space-12),6vw,var(--space-20))] aspect-[4/5] overflow-hidden bg-surface sm:aspect-[3/2] lg:aspect-auto lg:min-h-[90svh]"
+        data-project-detail-image-frame
+      >
         <Image
           alt={project.heroImage.alt}
-          className="h-full w-full object-cover"
+          className="image-editorial image-editorial-hero h-full w-full object-cover"
           data-project-detail-image
           fill
           priority
@@ -272,33 +298,6 @@ function ProjectHero({ project }: { project: NormalizedProject }) {
           src={project.heroImage.src}
         />
       </div>
-
-      <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(244_241_235_/_0.34)_0%,rgb(244_241_235_/_0.14)_44%,rgb(31_29_26_/_0.18)_100%)]" />
-      <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(244_241_235_/_0.58)_0%,rgb(244_241_235_/_0.22)_42%,rgb(244_241_235_/_0.02)_100%)]" />
-
-      <Container
-        as="div"
-        className="relative z-base flex min-h-[90svh] items-end pb-[clamp(var(--space-16),10vw,var(--space-30))] pt-[var(--space-30)]"
-      >
-        <div className="grid w-full gap-8 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-          <div className="max-w-[900px] lg:col-span-7 lg:col-start-2" data-project-detail-reveal>
-            <p className="mb-5 text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
-              {project.category}
-            </p>
-            <h1 className="font-display text-[length:clamp(3rem,7vw,8rem)] leading-[0.96] tracking-[var(--letter-spacing-heading)] text-balance text-foreground">
-              {project.title}
-            </h1>
-          </div>
-
-          <div
-            className="flex items-start justify-between gap-6 border-t border-border pt-4 text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-secondary lg:col-span-2 lg:col-start-10 lg:block lg:border-t-0 lg:pt-0 lg:text-right"
-            data-project-detail-reveal
-          >
-            <p>{project.location}</p>
-            <p className="lg:mt-4">{project.year}</p>
-          </div>
-        </div>
-      </Container>
     </Section>
   );
 }
@@ -311,14 +310,14 @@ function ProjectGallery({ images }: { images: ProjectImage[] }) {
   return (
     <Section className="bg-background py-[var(--section-spacing-large)]" spacing="none">
       <Container>
-        <div className="space-y-[clamp(var(--space-24),12vw,var(--space-50))]">
+        <div className="space-y-[clamp(var(--space-24),10vw,var(--space-40))]">
           {images.map((image, index) => {
             const isPortrait = image.orientation === "portrait";
             const rhythm = [
               {
                 frame: "relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-[16/10]",
                 image: "lg:col-span-12",
-                sizes: "100vw",
+                sizes: "(min-width: 1824px) 1680px, (min-width: 1024px) calc(100vw - 144px), calc(100vw - 40px)",
               },
               {
                 frame: "relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-[3/2]",
@@ -350,12 +349,12 @@ function ProjectGallery({ images }: { images: ProjectImage[] }) {
               >
                 <div className={imageClass}>
                   <div
-                    className={frameClass}
+                    className={cn("editorial-image-frame", frameClass)}
                     data-project-detail-image-frame
                   >
                     <Image
                       alt={image.alt}
-                      className="h-full w-full object-cover"
+                      className="image-editorial h-full w-full object-cover"
                       data-project-detail-image
                       fill
                       sizes={isPortrait ? "(min-width: 1024px) 42vw, 100vw" : rhythm.sizes}
@@ -367,7 +366,7 @@ function ProjectGallery({ images }: { images: ProjectImage[] }) {
                 {image.caption ? (
                   <figcaption
                     className={cn(
-                      "max-w-[360px] text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted/80",
+                      "max-w-[360px] type-caption text-foreground-muted",
                       imageClass,
                     )}
                   >
@@ -409,45 +408,43 @@ export async function ProjectDetail({ slug }: ProjectDetailProps) {
       <StructuredData data={projectStructuredData} />
       <ProjectHero project={project} />
 
-      <Section className="bg-background-secondary" spacing="large">
-        <Container>
-          <dl className="grid gap-8 md:grid-cols-2 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <div className="lg:col-span-3" data-project-detail-reveal>
-              <DetailItem label="Services" value={project.services} />
-            </div>
-            <div className="lg:col-span-2" data-project-detail-reveal>
-              <DetailItem label="Area" value={project.area} />
-            </div>
-            <div className="lg:col-span-3" data-project-detail-reveal>
-              <DetailItem label="Architect" value={project.architect} />
-            </div>
-            <div className="lg:col-span-2 lg:col-start-11" data-project-detail-reveal>
-              <DetailItem label="Status" value={project.status} />
-            </div>
-          </dl>
-        </Container>
-      </Section>
-
       <Section
         className="bg-background py-[var(--section-spacing-large)] pb-[calc(var(--section-spacing-large)+var(--space-12))]"
         spacing="none"
       >
         <Container>
           <div className="grid gap-12 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p
-              className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-2"
+            <aside
+              className="self-start lg:sticky lg:top-32 lg:col-span-3"
               data-project-detail-reveal
             >
-              Statement
-            </p>
+              <p className="type-label text-foreground-muted">
+                Statement
+              </p>
 
-            <div
-              className="space-y-8 font-display text-[length:clamp(2.1rem,4.7vw,5.75rem)] leading-[1.04] text-balance text-foreground lg:col-span-8 lg:col-start-4 lg:space-y-10"
-              data-project-detail-reveal
-            >
-              {statementParagraphs.map((paragraph) => (
-                <p key={paragraph}>{paragraph}</p>
-              ))}
+              <dl className="mt-10 grid gap-6">
+                <DetailItem label="Services" value={project.services} />
+                <DetailItem label="Area" value={project.area} />
+                <DetailItem label="Architect" value={project.architect} />
+                <DetailItem label="Status" value={project.status} />
+              </dl>
+            </aside>
+
+            <div className="lg:col-span-8 lg:col-start-5" data-project-detail-reveal>
+              {statementParagraphs.map((paragraph, index) =>
+                index === 0 ? (
+                  <p className="type-statement text-foreground" key={paragraph}>
+                    {paragraph}
+                  </p>
+                ) : (
+                  <p
+                    className="mt-8 max-w-[620px] text-pretty text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground-secondary lg:mt-10"
+                    key={paragraph}
+                  >
+                    {paragraph}
+                  </p>
+                ),
+              )}
             </div>
           </div>
         </Container>
@@ -455,12 +452,12 @@ export async function ProjectDetail({ slug }: ProjectDetailProps) {
 
       <Section className="bg-background py-0" spacing="none">
         <div
-          className="relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-[16/10] lg:min-h-[82svh] lg:aspect-auto"
+          className="editorial-image-frame relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-[16/10] lg:min-h-[82svh] lg:aspect-auto"
           data-project-detail-image-frame
         >
           <Image
             alt={project.featureImage.alt}
-            className="h-full w-full object-cover"
+            className="image-editorial h-full w-full object-cover"
             data-project-detail-image
             fill
             sizes="100vw"
@@ -477,7 +474,7 @@ export async function ProjectDetail({ slug }: ProjectDetailProps) {
           <Container>
             <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
               <p
-                className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-2"
+                className="type-label text-foreground-muted lg:col-span-2"
                 data-project-detail-reveal
               >
                 Materials
@@ -492,7 +489,7 @@ export async function ProjectDetail({ slug }: ProjectDetailProps) {
                     className="grid grid-cols-[3ch_1fr] gap-5 border-t border-border pt-5 text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground"
                     key={material}
                   >
-                    <span className="font-sans text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+                    <span className="font-sans type-label text-foreground-muted">
                       {String(index + 1).padStart(2, "0")}
                     </span>
                     <span>{material}</span>
@@ -509,21 +506,29 @@ export async function ProjectDetail({ slug }: ProjectDetailProps) {
       {nextProject ? (
         <Section className="bg-background-secondary" spacing="large">
           <Container>
-            <div
-              className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]"
+            <Link
+              className="plate-link group block"
               data-project-detail-reveal
+              href={nextProject.href}
             >
-              <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-3">
-                Next Project
-              </p>
+              <div className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
+                <p className="type-label text-foreground-muted lg:col-span-3">
+                  Next Project
+                </p>
 
-              <Link
-                className="group font-display text-[length:clamp(2.75rem,6vw,7rem)] leading-[0.96] tracking-[var(--letter-spacing-heading)] text-balance text-foreground transition-colors duration-base ease-architectural-out hover:text-accent focus-visible:text-accent lg:col-span-7 lg:col-start-5"
-                href={nextProject.href}
-              >
-                {nextProject.title}
-              </Link>
-            </div>
+                <div className="flex items-baseline justify-between gap-8 lg:col-span-8 lg:col-start-5">
+                  <span className="type-display text-foreground">
+                    <span className="plate-link-underline">{nextProject.title}</span>
+                  </span>
+                  <span
+                    className="hidden text-[length:clamp(1.5rem,2vw,2.25rem)] leading-none text-foreground transition-transform duration-base ease-architectural-out group-hover:translate-x-2 sm:block"
+                    aria-hidden="true"
+                  >
+                    &rarr;
+                  </span>
+                </div>
+              </div>
+            </Link>
           </Container>
         </Section>
       ) : null}

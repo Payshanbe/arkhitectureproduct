@@ -10,6 +10,10 @@ export const galleryField: Field = {
       type: "upload",
       relationTo: "media",
       required: true,
+      admin: {
+        description:
+          "Use a unique Media item for each gallery image. Replacing a shared Media file updates every field that references it.",
+      },
     },
     {
       name: "caption",

@@ -11,12 +11,12 @@ const heroImage = {
 
 export function HomeHero() {
   return (
-    <Section className="overflow-hidden py-0" spacing="none">
+    <Section className="overflow-hidden py-0" data-hero-theme="dark" spacing="none">
       <HomeHeroMotion className="relative min-h-[88svh] sm:min-h-svh">
         <div className="absolute inset-0" data-home-hero-image-frame>
           <Image
             alt={heroImage.alt}
-            className="h-full w-full object-cover"
+            className="image-editorial image-editorial-hero h-full w-full object-cover object-[56%_center] sm:object-center"
             data-home-hero-image
             fill
             priority
@@ -26,46 +26,55 @@ export function HomeHero() {
           />
         </div>
 
-        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(244_241_235_/_0.34)_0%,rgb(244_241_235_/_0.12)_46%,rgb(31_29_26_/_0.1)_100%)]" />
-        <div className="absolute inset-0 bg-[linear-gradient(90deg,rgb(244_241_235_/_0.58)_0%,rgb(244_241_235_/_0.22)_40%,rgb(244_241_235_/_0.02)_100%)]" />
+        <div className="absolute inset-0 bg-[linear-gradient(180deg,rgb(26_24_21_/_0)_46%,rgb(26_24_21_/_0.44)_100%)]" />
 
         <Container
           as="div"
-          className="relative z-base flex min-h-[88svh] items-end pb-[clamp(var(--space-16),10vw,var(--space-30))] pt-[var(--space-30)] sm:min-h-svh"
+          className="relative z-base flex min-h-[88svh] items-end pb-[clamp(var(--space-24),10vw,var(--space-30))] pt-[calc(var(--space-30)+var(--space-8))] sm:min-h-svh"
         >
-          <div className="grid w-full gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <div className="max-w-[760px] lg:col-span-6 lg:col-start-2">
+          <div className="grid w-full gap-12 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
+            <div className="max-w-[640px] lg:col-span-6 lg:col-start-1">
               <p
-                className="mb-5 text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted"
+                className="mb-7 type-label text-[#f4f1eb]/78"
                 data-home-hero-label
               >
-                Architecture / Interiors / Atmosphere
+                Architecture Studio
               </p>
 
               <h1
-                className="font-display font-normal text-[length:clamp(2.65rem,6.4vw,7rem)] leading-[0.99] tracking-[var(--letter-spacing-heading)] text-balance text-foreground"
+                className="type-hero text-[#f4f1eb]"
                 data-home-hero-heading
               >
                 Architecture shaped by light, material, and restraint.
               </h1>
 
               <p
-                className="mt-6 max-w-[520px] text-pretty text-[length:var(--font-size-body)] leading-[var(--line-height-body)] text-foreground-secondary"
+                className="mt-8 max-w-[360px] text-pretty type-body text-[#f4f1eb]/78"
                 data-home-hero-supporting
               >
                 A cinematic portfolio for spaces that feel calm, precise, and quietly enduring.
               </p>
             </div>
-
-            <div
-              className="flex items-end justify-between gap-4 border-t border-border/45 pt-3 text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted/65 lg:col-span-2 lg:col-start-11 lg:block lg:border-t-0 lg:pt-0 lg:text-right"
-              data-home-hero-indicator
-            >
-              <span>Scroll</span>
-              <span className="h-px w-8 bg-current opacity-60 lg:ml-auto lg:mt-3 lg:block" aria-hidden="true" />
-            </div>
           </div>
         </Container>
+
+        <div
+          className="absolute inset-x-0 bottom-0 z-base border-t border-[#f4f1eb]/28"
+          data-home-hero-indicator
+        >
+          <Container
+            as="div"
+            className="grid min-h-14 items-center gap-4 py-4 type-label text-[#f4f1eb]/72 sm:grid-cols-12 sm:gap-[var(--grid-gap)]"
+          >
+            <p className="sm:col-span-4">Arkhitecture &mdash; Architecture Studio</p>
+            <p className="hidden sm:col-span-4 sm:block">
+              Tashkent, UZ 41.3&deg;N 69.2&deg;E
+            </p>
+            <div className="hidden justify-end sm:col-span-4 sm:flex" aria-hidden="true">
+              <span className="h-6 w-px bg-current opacity-55" />
+            </div>
+          </Container>
+        </div>
       </HomeHeroMotion>
     </Section>
   );

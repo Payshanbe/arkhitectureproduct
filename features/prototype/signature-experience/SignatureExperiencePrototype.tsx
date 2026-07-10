@@ -107,11 +107,11 @@ export function SignatureExperiencePrototype() {
         >
           <Container>
             <div className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-              <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-3">
+              <p className="type-label text-foreground-muted lg:col-span-3">
                 Prototype
               </p>
               <div className="lg:col-span-7 lg:col-start-5">
-                <h1 className="font-display text-[length:clamp(3rem,7vw,8rem)] leading-[0.98] tracking-[var(--letter-spacing-heading)] text-balance text-foreground">
+                <h1 className="type-display text-foreground">
                   Signature process experience.
                 </h1>
                 <p className="mt-8 max-w-[680px] text-pretty text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground-secondary">
@@ -132,7 +132,7 @@ export function SignatureExperiencePrototype() {
           <Container className="flex min-h-svh items-center py-[var(--section-spacing-medium)]">
             <div className="grid w-full items-center gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
               <div className="lg:col-span-4">
-                <p className="mb-6 text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+                <p className="mb-6 type-label text-foreground-muted">
                   Process
                 </p>
                 <div className="relative min-h-[320px]">
@@ -143,11 +143,11 @@ export function SignatureExperiencePrototype() {
                       key={step.id}
                       style={{ opacity: index === 0 ? 1 : 0 }}
                     >
-                      <p className="mb-5 text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+                      <p className="mb-5 type-label text-foreground-muted">
                         {step.index}
                       </p>
                       <h2
-                        className="font-display text-[length:clamp(3.5rem,7vw,7.5rem)] leading-[0.95] tracking-[var(--letter-spacing-heading)] text-foreground"
+                        className="type-display text-foreground"
                         id={index === 0 ? "signature-process-title" : undefined}
                       >
                         {step.title}
@@ -199,17 +199,17 @@ export function SignatureExperiencePrototype() {
         <section className="signature-prototype-static bg-background-secondary py-[var(--section-spacing-large)]">
           <Container>
             <div className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-              <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted lg:col-span-3">
+              <p className="type-label text-foreground-muted lg:col-span-3">
                 Process
               </p>
               <div className="space-y-16 lg:col-span-7 lg:col-start-5">
                 {processSteps.map((step) => (
                   <article className="grid gap-6 border-t border-border pt-5" key={step.id}>
-                    <p className="text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-label)] text-foreground-muted">
+                    <p className="type-label text-foreground-muted">
                       {step.index}
                     </p>
                     <div>
-                      <h2 className="font-display text-[length:clamp(2.75rem,10vw,5.5rem)] leading-[0.98] tracking-[var(--letter-spacing-heading)] text-foreground">
+                      <h2 className="type-section-heading text-foreground">
                         {step.title}
                       </h2>
                       <p className="mt-5 max-w-[620px] text-pretty text-[length:var(--font-size-body)] leading-[var(--line-height-body)] text-foreground-secondary">
@@ -313,4 +313,3 @@ function ProcessDrawing() {
     </svg>
   );
 }
-
