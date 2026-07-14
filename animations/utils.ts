@@ -16,6 +16,14 @@ export function toElementArray(target: gsap.DOMTarget) {
   return gsap.utils.toArray<Element>(target);
 }
 
+export function hasConnectedTarget(target: gsap.DOMTarget) {
+  if (typeof window === "undefined") {
+    return false;
+  }
+
+  return toElementArray(target).some((element) => element.isConnected);
+}
+
 export function defaultScrollTrigger(
   target: gsap.DOMTarget,
   scrollTrigger?: ScrollTrigger.Vars | false,
@@ -24,10 +32,21 @@ export function defaultScrollTrigger(
     return undefined;
   }
 
+  if (!hasConnectedTarget(target)) {
+    return undefined;
+  }
+
+  const trigger = scrollTrigger?.trigger ?? target;
+
+  if (!hasConnectedTarget(trigger)) {
+    return undefined;
+  }
+
   return {
+    invalidateOnRefresh: true,
     once: true,
     start: "top 85%",
-    trigger: target,
+    trigger,
     ...scrollTrigger,
   };
 }

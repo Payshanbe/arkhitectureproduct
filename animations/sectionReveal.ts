@@ -1,6 +1,6 @@
 import { gsap, initGSAP } from "@/animations/gsap";
 import type { MotionTarget, ScrollMotionOptions } from "@/animations/types";
-import { defaultScrollTrigger, prefersReducedMotion } from "@/animations/utils";
+import { defaultScrollTrigger, hasConnectedTarget, prefersReducedMotion } from "@/animations/utils";
 
 interface SectionRevealOptions extends ScrollMotionOptions {
   y?: number;
@@ -17,6 +17,10 @@ export function sectionReveal(target: MotionTarget, options: SectionRevealOption
   } = options;
 
   initGSAP();
+
+  if (!hasConnectedTarget(target)) {
+    return gsap.set(target, { autoAlpha: 1, y: 0 });
+  }
 
   if (prefersReducedMotion(reducedMotion)) {
     return gsap.set(target, { autoAlpha: 1, y: 0 });

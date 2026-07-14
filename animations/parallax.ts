@@ -1,6 +1,6 @@
 import { gsap, initGSAP } from "@/animations/gsap";
 import type { MotionTarget, ScrollMotionOptions } from "@/animations/types";
-import { defaultScrollTrigger, prefersReducedMotion } from "@/animations/utils";
+import { defaultScrollTrigger, hasConnectedTarget, prefersReducedMotion } from "@/animations/utils";
 
 interface ParallaxOptions extends ScrollMotionOptions {
   fromYPercent?: number;
@@ -20,6 +20,10 @@ export function parallax(target: MotionTarget, options: ParallaxOptions = {}) {
   } = options;
 
   initGSAP();
+
+  if (!hasConnectedTarget(target)) {
+    return gsap.set(target, { yPercent: 0 });
+  }
 
   if (prefersReducedMotion(reducedMotion)) {
     return gsap.set(target, { yPercent: 0 });
