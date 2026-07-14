@@ -1,5 +1,10 @@
 import { Page } from "@/components/layout/Page";
 import { ContactPage } from "@/features/contact/ContactPage";
+import {
+  getContactFormSettings,
+  getContactPageContent,
+  getSiteChromeContent,
+} from "@/lib/cms/siteContent";
 import { createPageMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createPageMetadata({
@@ -8,10 +13,37 @@ export const metadata = createPageMetadata({
   path: "/contact",
 });
 
-export default function ContactRoute() {
+interface ContactRouteProps {
+  searchParams?: Promise<{
+    error?: string;
+    sent?: string;
+  }>;
+}
+
+export default async function ContactRoute({ searchParams }: ContactRouteProps) {
+  const [content, formSettings, siteContent] = await Promise.all([
+    getContactPageContent(),
+    getContactFormSettings(),
+    getSiteChromeContent(),
+  ]);
+  const params = await searchParams;
+  const submissionStatus =
+    params?.sent === "1"
+      ? "sent"
+      : params?.error === "email"
+        ? "email"
+        : params?.error === "required"
+          ? "required"
+          : undefined;
+
   return (
     <Page>
-      <ContactPage />
+      <ContactPage
+        contact={siteContent.contact}
+        content={content}
+        formSettings={formSettings}
+        submissionStatus={submissionStatus}
+      />
     </Page>
   );
 }

@@ -5,6 +5,7 @@ import { HomeFeaturedProject } from "@/features/home/HomeFeaturedProject";
 import { HomeHero } from "@/features/home/HomeHero";
 import { HomeSelectedProjects } from "@/features/home/HomeSelectedProjects";
 import { HomeStudioIntro } from "@/features/home/HomeStudioIntro";
+import { getHomePageContent, getSiteChromeContent } from "@/lib/cms/siteContent";
 
 export const metadata = createPageMetadata({
   description:
@@ -13,14 +14,19 @@ export const metadata = createPageMetadata({
   title: "Architecture and Interior Design Studio",
 });
 
-export default function HomePage() {
+export default async function HomePage() {
+  const [homeContent, siteContent] = await Promise.all([
+    getHomePageContent(),
+    getSiteChromeContent(),
+  ]);
+
   return (
     <Page>
-      <HomeHero />
-      <HomeSelectedProjects />
-      <HomeStudioIntro />
-      <HomeFeaturedProject />
-      <HomeContactExperience />
+      <HomeHero content={homeContent.hero} siteName={siteContent.settings.siteName} />
+      <HomeSelectedProjects content={homeContent.selectedProjects} />
+      <HomeStudioIntro content={homeContent.studioIntro} />
+      <HomeFeaturedProject content={homeContent.featuredProject} />
+      <HomeContactExperience contact={siteContent.contact} content={homeContent.contact} />
     </Page>
   );
 }

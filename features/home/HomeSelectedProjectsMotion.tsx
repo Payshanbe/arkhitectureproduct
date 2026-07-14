@@ -56,6 +56,20 @@ export function HomeSelectedProjectsMotion({ children }: HomeSelectedProjectsMot
         });
       });
 
+      root.querySelectorAll<HTMLElement>("[data-project-marginalia]").forEach((item) => {
+        const reveal = sectionReveal(item, {
+          reducedMotion: prefersReducedMotion,
+          scrollTrigger: {
+            start: "top 85%",
+          },
+          y: 14,
+        });
+
+        cleanups.push(() => {
+          reveal.kill();
+        });
+      });
+
       return () => {
         cleanups.forEach((cleanup) => cleanup());
       };

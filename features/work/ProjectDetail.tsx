@@ -8,6 +8,10 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { ProjectDetailMotion } from "@/features/work/ProjectDetailMotion";
+import {
+  getProjectDetailSettings,
+  type ProjectDetailSettingsContent,
+} from "@/lib/cms/siteContent";
 import { creativeWorkJsonLd } from "@/lib/seo/structuredData";
 import type { Media, Project, ProjectCategory } from "@/types/payload-types";
 import { cn } from "@/utils/cn";
@@ -47,20 +51,24 @@ interface NextProject {
   title: string;
 }
 
-const serviceLabels: Record<NonNullable<Project["services"]>[number], string> = {
-  architecture: "Architecture",
-  "furniture-design": "Furniture Design",
-  "interior-design": "Interior Design",
-  landscape: "Landscape",
-  "master-planning": "Master Planning",
-};
+function getServiceLabels(settings: ProjectDetailSettingsContent) {
+  return {
+    architecture: settings.serviceLabels.architecture,
+    "furniture-design": settings.serviceLabels.furnitureDesign,
+    "interior-design": settings.serviceLabels.interiorDesign,
+    landscape: settings.serviceLabels.landscape,
+    "master-planning": settings.serviceLabels.masterPlanning,
+  } satisfies Record<NonNullable<Project["services"]>[number], string>;
+}
 
-const statusLabels: Record<NonNullable<Project["status"]>, string> = {
-  built: "Built",
-  completed: "Completed",
-  concept: "Concept",
-  "in-progress": "In Progress",
-};
+function getStatusLabels(settings: ProjectDetailSettingsContent) {
+  return {
+    built: settings.statusLabels.built,
+    completed: settings.statusLabels.completed,
+    concept: settings.statusLabels.concept,
+    "in-progress": settings.statusLabels.inProgress,
+  } satisfies Record<NonNullable<Project["status"]>, string>;
+}
 
 function isMedia(value: Project["coverImage"]): value is Media {
   return typeof value === "object" && value !== null;
@@ -88,11 +96,11 @@ function normalizeImageUrl(url?: string | null) {
   }
 }
 
-function normalizeLocation(project: Project) {
+function normalizeLocation(project: Project, settings: ProjectDetailSettingsContent) {
   const primaryLocation = project.city ?? project.location;
   const location = [primaryLocation, project.country].filter(Boolean).join(", ");
 
-  return location || "Location forthcoming";
+  return location || settings.fallbacks.location;
 }
 
 function normalizeMaterials(materials?: string | null) {
@@ -144,9 +152,14 @@ function normalizeGalleryImage(item: ProjectImageInput, index: number, title: st
   };
 }
 
-function normalizeProject(project: Project): NormalizedProject {
+function normalizeProject(
+  project: Project,
+  settings: ProjectDetailSettingsContent,
+): NormalizedProject {
   const coverImage = isMedia(project.coverImage) ? project.coverImage : null;
-  const category = isProjectCategory(project.category) ? project.category.title : "Project";
+  const category = isProjectCategory(project.category)
+    ? project.category.title
+    : settings.fallbacks.category;
   const gallery = [...(project.gallery ?? [])]
     .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
     .map((item, index) => normalizeGalleryImage(item, index, project.title));
@@ -168,18 +181,18 @@ function normalizeProject(project: Project): NormalizedProject {
       project.concept ??
       project.excerpt ??
       project.shortDescription ??
-      "A quiet architectural study shaped through proportion, atmosphere, and material restraint.",
+      settings.fallbacks.description,
     featureImage: gallery[0] ?? heroImage,
     gallery,
     heroImage,
     id: String(project.id),
-    location: normalizeLocation(project),
+    location: normalizeLocation(project, settings),
     materials: normalizeMaterials(project.materials),
-    services: project.services?.map((service) => serviceLabels[service]) ?? [],
+    services: project.services?.map((service) => getServiceLabels(settings)[service]) ?? [],
     slug: project.slug,
-    status: project.status ? statusLabels[project.status] : undefined,
+    status: project.status ? getStatusLabels(settings)[project.status] : undefined,
     title: project.title,
-    year: project.year ? String(project.year) : "Undated",
+    year: project.year ? String(project.year) : settings.fallbacks.year,
   };
 }
 
@@ -383,13 +396,16 @@ function ProjectGallery({ images }: { images: ProjectImage[] }) {
 }
 
 export async function ProjectDetail({ slug }: ProjectDetailProps) {
-  const projectDocument = await getProjectBySlug(slug);
+  const [projectDocument, settings] = await Promise.all([
+    getProjectBySlug(slug),
+    getProjectDetailSettings(),
+  ]);
 
   if (!projectDocument) {
     notFound();
   }
 
-  const project = normalizeProject(projectDocument);
+  const project = normalizeProject(projectDocument, settings);
   const nextProject = await getNextProject(project.slug);
   const statementParagraphs = splitEditorialText(project.description);
   const projectStructuredData = creativeWorkJsonLd({
@@ -419,14 +435,14 @@ export async function ProjectDetail({ slug }: ProjectDetailProps) {
               data-project-detail-reveal
             >
               <p className="type-label text-foreground-muted">
-                Statement
+                {settings.labels.statement}
               </p>
 
               <dl className="mt-10 grid gap-6">
-                <DetailItem label="Services" value={project.services} />
-                <DetailItem label="Area" value={project.area} />
-                <DetailItem label="Architect" value={project.architect} />
-                <DetailItem label="Status" value={project.status} />
+                <DetailItem label={settings.labels.services} value={project.services} />
+                <DetailItem label={settings.labels.area} value={project.area} />
+                <DetailItem label={settings.labels.architect} value={project.architect} />
+                <DetailItem label={settings.labels.status} value={project.status} />
               </dl>
             </aside>
 
@@ -477,7 +493,7 @@ export async function ProjectDetail({ slug }: ProjectDetailProps) {
                 className="type-label text-foreground-muted lg:col-span-2"
                 data-project-detail-reveal
               >
-                Materials
+                {settings.labels.materials}
               </p>
 
               <ul
@@ -513,7 +529,7 @@ export async function ProjectDetail({ slug }: ProjectDetailProps) {
             >
               <div className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
                 <p className="type-label text-foreground-muted lg:col-span-3">
-                  Next Project
+                  {settings.labels.nextProject}
                 </p>
 
                 <div className="flex items-baseline justify-between gap-8 lg:col-span-8 lg:col-start-5">

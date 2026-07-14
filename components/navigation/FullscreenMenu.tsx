@@ -6,12 +6,16 @@ import { initGSAP } from "@/animations/gsap";
 import { menuReveal } from "@/animations/menuReveal";
 import { Navigation } from "@/components/navigation/Navigation";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import type { NavigationItem } from "@/lib/constants/navigation";
 import { cn } from "@/utils/cn";
 
 interface FullscreenMenuProps {
+  description?: string;
   id: string;
   isOpen: boolean;
+  items?: NavigationItem[];
   onClose: () => void;
+  siteName?: string;
 }
 
 function getFocusableElements(container: HTMLElement) {
@@ -22,7 +26,14 @@ function getFocusableElements(container: HTMLElement) {
   ).filter((element) => !element.hasAttribute("disabled") && !element.getAttribute("aria-hidden"));
 }
 
-export function FullscreenMenu({ id, isOpen, onClose }: FullscreenMenuProps) {
+export function FullscreenMenu({
+  description = "A quiet path through selected work, studio thinking, and contact.",
+  id,
+  isOpen,
+  items,
+  onClose,
+  siteName = "Arkhitecture",
+}: FullscreenMenuProps) {
   const previousActiveElement = useRef<Element | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -162,7 +173,12 @@ export function FullscreenMenu({ id, isOpen, onClose }: FullscreenMenuProps) {
           </div>
 
           <div ref={navigationRef}>
-            <Navigation label="Fullscreen navigation" onNavigate={onClose} variant="menu" />
+            <Navigation
+              items={items}
+              label="Fullscreen navigation"
+              onNavigate={onClose}
+              variant="menu"
+            />
           </div>
 
           <div
@@ -170,10 +186,10 @@ export function FullscreenMenu({ id, isOpen, onClose }: FullscreenMenuProps) {
             ref={supportingRef}
           >
             <p className="max-w-[var(--text-width)]">
-              A quiet path through selected work, studio thinking, and contact.
+              {description}
             </p>
             <p className="text-left uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] text-foreground-muted sm:text-right">
-              Arkhitecture
+              {siteName}
             </p>
           </div>
         </div>

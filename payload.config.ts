@@ -6,14 +6,21 @@ import { buildConfig } from "payload";
 import sharp from "sharp";
 
 import { Media } from "./payload/collections/Media.ts";
+import { ContactSubmissions } from "./payload/collections/ContactSubmissions.ts";
 import { ProjectCategories } from "./payload/collections/ProjectCategories.ts";
 import { Projects } from "./payload/collections/Projects.ts";
 import { Users } from "./payload/collections/Users.ts";
 import { getPayloadEnv } from "./payload/env.ts";
 import { ContactInfo } from "./payload/globals/ContactInfo.ts";
+import { ContactFormSettings } from "./payload/globals/ContactFormSettings.ts";
+import { ContactPage } from "./payload/globals/ContactPage.ts";
+import { HomePage } from "./payload/globals/HomePage.ts";
 import { Navigation } from "./payload/globals/Navigation.ts";
+import { ProjectDetailSettings } from "./payload/globals/ProjectDetailSettings.ts";
 import { SeoDefaults } from "./payload/globals/SeoDefaults.ts";
 import { SiteSettings } from "./payload/globals/SiteSettings.ts";
+import { StudioPage } from "./payload/globals/StudioPage.ts";
+import { WorkPage } from "./payload/globals/WorkPage.ts";
 
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
@@ -26,8 +33,19 @@ export default buildConfig({
       baseDir: dirname,
     },
   },
-  collections: [Users, Media, ProjectCategories, Projects],
-  globals: [SiteSettings, ContactInfo, Navigation, SeoDefaults],
+  collections: [Users, Media, ProjectCategories, Projects, ContactSubmissions],
+  globals: [
+    SiteSettings,
+    ContactInfo,
+    Navigation,
+    SeoDefaults,
+    HomePage,
+    StudioPage,
+    ContactPage,
+    WorkPage,
+    ProjectDetailSettings,
+    ContactFormSettings,
+  ],
   db: postgresAdapter({
     migrationDir: path.resolve(dirname, "payload/migrations"),
     pool: {

@@ -1,27 +1,14 @@
 import Link from "next/link";
 
 import { Container } from "@/components/layout/Container";
-import { primaryNavigation } from "@/lib/constants/navigation";
-
-const socialLinks = [
-  {
-    href: "https://www.instagram.com/",
-    label: "Instagram",
-  },
-  {
-    href: "https://www.linkedin.com/",
-    label: "LinkedIn",
-  },
-  {
-    href: "https://www.behance.net/",
-    label: "Behance",
-  },
-];
+import { getSiteChromeContent } from "@/lib/cms/siteContent";
 
 const footerLinkClass =
   "text-[length:var(--font-size-label)] uppercase tracking-[var(--letter-spacing-label)] leading-[var(--line-height-ui)] text-foreground-muted transition-opacity duration-base ease-architectural-out hover:opacity-65 focus-visible:text-accent";
 
-export function Footer() {
+export async function Footer() {
+  const { contact, navigationItems, settings } = await getSiteChromeContent();
+
   return (
     <footer className="bg-background pb-10 pt-6 text-foreground lg:pb-12">
       <Container>
@@ -31,11 +18,11 @@ export function Footer() {
               className="inline-flex text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[0.32em] transition-opacity duration-base ease-architectural-out hover:opacity-65 focus-visible:text-accent"
               href="/"
             >
-              Arkhitecture
+              {settings.siteName}
             </Link>
 
             <nav aria-label="Footer navigation" className="flex flex-wrap gap-x-7 gap-y-3">
-              {primaryNavigation.map((item) => (
+              {navigationItems.map((item) => (
                 <Link className={footerLinkClass} href={item.href} key={item.href}>
                   {item.label}
                 </Link>
@@ -43,7 +30,7 @@ export function Footer() {
             </nav>
 
             <nav aria-label="Social links" className="flex flex-wrap gap-x-7 gap-y-3">
-              {socialLinks.map((item) => (
+              {contact.socialLinks.map((item) => (
                 <a
                   className={footerLinkClass}
                   href={item.href}
@@ -57,7 +44,7 @@ export function Footer() {
             </nav>
 
             <p className="text-[length:var(--font-size-label)] uppercase tracking-[var(--letter-spacing-label)] leading-[var(--line-height-ui)] text-foreground-muted/80">
-              &copy; 2026 Arkhitecture
+              {settings.copyright}
             </p>
           </div>
         </div>

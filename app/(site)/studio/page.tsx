@@ -1,5 +1,6 @@
 import { Page } from "@/components/layout/Page";
 import { StudioPage } from "@/features/studio/StudioPage";
+import { getSiteChromeContent, getStudioPageContent } from "@/lib/cms/siteContent";
 import { createPageMetadata } from "@/lib/seo/metadata";
 
 export const metadata = createPageMetadata({
@@ -8,10 +9,15 @@ export const metadata = createPageMetadata({
   path: "/studio",
 });
 
-export default function StudioRoute() {
+export default async function StudioRoute() {
+  const [content, siteContent] = await Promise.all([
+    getStudioPageContent(),
+    getSiteChromeContent(),
+  ]);
+
   return (
     <Page>
-      <StudioPage />
+      <StudioPage contact={siteContent.contact} content={content} />
     </Page>
   );
 }

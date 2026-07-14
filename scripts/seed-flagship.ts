@@ -1,4 +1,6 @@
 import path from "node:path";
+import os from "node:os";
+import { copyFile, mkdir } from "node:fs/promises";
 
 import configPromise from "@payload-config";
 import { getPayload, type Payload } from "payload";
@@ -49,6 +51,7 @@ interface ProjectSeed {
 }
 
 const placeholderImagePath = path.resolve(process.cwd(), "public/images/home-hero-placeholder.png");
+const seedMediaDir = path.join(os.tmpdir(), "arkhitectureweb-seed-media");
 const studioName = "Arkhitecture";
 
 const categories: CategorySeed[] = [
@@ -390,6 +393,17 @@ function getSeedMediaAlt(project: ProjectSeed, role: SeedMediaRole) {
   return `${project.title} ${role} editorial placeholder image.`;
 }
 
+async function prepareSeedMediaFile(project: ProjectSeed, role: SeedMediaRole) {
+  await mkdir(seedMediaDir, { recursive: true });
+
+  const extension = path.extname(placeholderImagePath) || ".png";
+  const destination = path.join(seedMediaDir, `${project.slug}-${role}${extension}`);
+
+  await copyFile(placeholderImagePath, destination);
+
+  return destination;
+}
+
 function isPayloadMedia(value: unknown): value is { photographer?: null | string; url?: null | string } {
   return typeof value === "object" && value !== null;
 }
@@ -448,7 +462,7 @@ async function getOrCreateProjectMedia(
   return payload.create({
     collection: "media",
     data,
-    filePath: placeholderImagePath,
+    filePath: await prepareSeedMediaFile(project, role),
   });
 }
 
@@ -523,7 +537,6 @@ async function upsertProject(
     shortDescription: project.excerpt,
     slug: project.slug,
     spatialQualities: project.spatialQualities,
-    status: project.status,
     summary: project.summary,
     tagline: project.tagline,
     title: project.title,
@@ -628,6 +641,224 @@ async function populateGlobals(payload: Payload) {
         "Architecture and interior design studio shaping calm, enduring spaces through light, material, proportion, and context.",
       defaultTitle: `${studioName} Architecture Studio`,
       titleTemplate: `%s | ${studioName}`,
+    },
+  });
+
+  await payload.updateGlobal({
+    slug: "home-page",
+    data: {
+      contact: {
+        body:
+          "For residences, interiors, and architectural collaborations, send a brief note and we will reply with a considered next step.",
+        label: "Let's Connect",
+        statement: "Begin with a conversation about place, atmosphere, and what should endure.",
+      },
+      featuredProject: {
+        heading: "A slower look at one selected work.",
+        label: "Featured Project",
+        linkLabel: "View Project →",
+      },
+      hero: {
+        label: "Architecture Studio",
+        locationLine: "Tashkent, UZ 41.3°N 69.2°E",
+        supportingText:
+          "A cinematic portfolio for spaces that feel calm, precise, and quietly enduring.",
+        heading: "Architecture shaped by light, material, and restraint.",
+      },
+      selectedProjects: {
+        archiveLinkLabel: "View the archive →",
+        heading: "A quiet sequence of spaces shaped by proportion, material, and light.",
+        label: "Selected Work",
+      },
+      studioIntro: {
+        body:
+          "The studio approaches each project as a careful composition of light, material, proportion, and daily ritual. The result is architecture that feels calm, precise, and quietly enduring.",
+        label: "Our Approach",
+        linkHref: "/studio",
+        linkLabel: "Learn More",
+        statement:
+          "We design spaces through atmosphere, restraint, and a close reading of context.",
+      },
+    },
+  });
+
+  await payload.updateGlobal({
+    slug: "studio-page",
+    data: {
+      contactCta: {
+        label: "Contact",
+        linkLabel: "Start a conversation",
+        statement: "Begin with a place, a question, or a quiet ambition for how a space should feel.",
+      },
+      hero: {
+        label: "Studio",
+        statement:
+          "We design spaces through atmosphere, restraint, and a careful reading of context.",
+      },
+      information: [
+        {
+          label: "Location",
+          value: "Remote studio with projects across Europe and selected international contexts.",
+        },
+        {
+          label: "Disciplines",
+          value:
+            "Architecture, interiors, furniture direction, landscape integration, and spatial strategy.",
+        },
+        {
+          label: "Collaborations",
+          value:
+            "Independent makers, engineers, landscape designers, artists, fabricators, and photographers.",
+        },
+      ],
+      philosophy: {
+        label: "Philosophy",
+        paragraphs: [
+          {
+            text:
+              "The studio works from the belief that architecture should become quieter as it becomes more precise. Each project begins with listening: to the site, to the pace of daily life, to climate, light, material, and the rituals that will eventually occupy the space.",
+          },
+          {
+            text:
+              "We are interested in restraint as an active design tool. A reduced palette is not an absence of thought; it is a way of allowing proportion, shadow, texture, and threshold to carry the emotional weight of a place.",
+          },
+          {
+            text:
+              "The result is not a fixed style, but a consistent way of working. Every decision is measured against atmosphere, longevity, and the ability of a space to feel inevitable over time.",
+          },
+        ],
+      },
+      principles: [
+        { text: "Architecture should frame life rather than perform for attention." },
+        { text: "Every material must justify its presence through use, atmosphere, or touch." },
+        { text: "Light is never decorative; it is structural to the experience." },
+        { text: "A plan should feel calm before it feels impressive." },
+        { text: "Longevity matters more than novelty." },
+      ],
+      process: {
+        label: "The Process",
+        statement:
+          "Six layers, from first trace to atmosphere. How every project is drawn into being.",
+      },
+    },
+  });
+
+  await payload.updateGlobal({
+    slug: "contact-page",
+    data: {
+      closing: {
+        label: "Closing",
+        statement:
+          "The first conversation is simply a way to understand what should be protected, clarified, and made possible.",
+      },
+      collaboration: {
+        label: "Collaboration",
+        statement:
+          "We work with private clients, developers, makers, and cultural collaborators who value restraint, clarity, and spaces that gather meaning slowly.",
+      },
+      hero: {
+        label: "Contact",
+        statement:
+          "Begin with a conversation about place, atmosphere, and how a space should feel.",
+      },
+      inquiry: {
+        body:
+          "Write a short note about the place, the ambition, and the atmosphere you have in mind. We reply within a few working days.",
+        label: "Inquiry",
+      },
+    },
+  });
+
+  await payload.updateGlobal({
+    slug: "work-page",
+    data: {
+      archive: {
+        ariaLabel: "Project archive",
+        emptyLocationLabel: "Archive",
+        emptyNumberLabel: "No. 00",
+        emptyTitle: "Projects will appear here once Payload contains published work.",
+        emptyYearLabel: "Pending",
+        plateLabel: "Plate",
+        platePlaceholder: "Photograph to come",
+      },
+      fallbacks: {
+        location: "Location forthcoming",
+        projectDescription:
+          "A quiet architectural study shaped by material restraint, atmosphere, and a close reading of place.",
+        year: "Undated",
+        yearRange: "Archive",
+      },
+      hero: {
+        intro:
+          "A selection of residential, hospitality, interior, and architectural work - shaped through renovation, restraint, and a close reading of place.",
+        label: "Work",
+        pluralProjectLabel: "projects",
+        singularProjectLabel: "project",
+        title: "A considered archive of spaces, materials, and atmosphere.",
+      },
+    },
+  });
+
+  await payload.updateGlobal({
+    slug: "project-detail-settings",
+    data: {
+      fallbacks: {
+        category: "Project",
+        description:
+          "A quiet architectural study shaped through proportion, atmosphere, and material restraint.",
+        location: "Location forthcoming",
+        year: "Undated",
+      },
+      labels: {
+        architect: "Architect",
+        area: "Area",
+        materials: "Materials",
+        nextProject: "Next Project",
+        services: "Services",
+        statement: "Statement",
+        status: "Status",
+      },
+      serviceLabels: {
+        architecture: "Architecture",
+        furnitureDesign: "Furniture Design",
+        interiorDesign: "Interior Design",
+        landscape: "Landscape",
+        masterPlanning: "Master Planning",
+      },
+      statusLabels: {
+        built: "Built",
+        completed: "Completed",
+        concept: "Concept",
+        inProgress: "In Progress",
+      },
+    },
+  });
+
+  await payload.updateGlobal({
+    slug: "contact-form-settings",
+    data: {
+      labels: {
+        city: "City",
+        company: "Company",
+        country: "Country",
+        email: "Email",
+        estimatedBudget: "Estimated Budget",
+        message: "Message",
+        name: "Name",
+        projectType: "Project Type",
+        studioInformation: "Studio Information",
+        submit: "Send inquiry ->",
+        timeline: "Timeline",
+      },
+      messages: {
+        defaultNote: "Your inquiry will be saved securely in the studio CMS for review.",
+        emailError: "Please enter a valid email address.",
+        requiredError: "Please complete your name, email, and message.",
+        success: "Thank you. Your inquiry has been received.",
+      },
+      placeholders: {
+        message: "The place, the ambition, the constraints.",
+      },
     },
   });
 }

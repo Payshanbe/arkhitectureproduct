@@ -3,16 +3,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { getPayload } from "payload";
 
-import { Container } from "@/components/layout/Container";
-import { Section } from "@/components/layout/Section";
 import { WorkArchiveMotion } from "@/features/work/WorkArchiveMotion";
-import type { Media, Project, ProjectCategory } from "@/types/payload-types";
-import { cn } from "@/utils/cn";
+import { getWorkPageContent, type WorkPageContent } from "@/lib/cms/siteContent";
+import type { Media, Project } from "@/types/payload-types";
 
-interface ArchiveProject {
-  category: string;
+interface WorkProject {
   coverAlt: string;
-  coverSrc: string;
+  coverSrc: string | null;
+  description: string;
   href: string;
   id: string;
   location: string;
@@ -24,13 +22,9 @@ function isMedia(value: Project["coverImage"]): value is Media {
   return typeof value === "object" && value !== null;
 }
 
-function isProjectCategory(value: Project["category"]): value is ProjectCategory {
-  return typeof value === "object" && value !== null;
-}
-
 function normalizeImageUrl(url?: string | null) {
   if (!url) {
-    return "/images/home-hero-placeholder.png";
+    return null;
   }
 
   try {
@@ -40,31 +34,38 @@ function normalizeImageUrl(url?: string | null) {
   }
 }
 
-function normalizeLocation(project: Project) {
+function normalizeLocation(project: Project, content: WorkPageContent) {
   const primaryLocation = project.city ?? project.location;
   const location = [primaryLocation, project.country].filter(Boolean).join(", ");
 
-  return location || "Location forthcoming";
+  return location || content.fallbacks.location;
 }
 
-function normalizeProject(project: Project): ArchiveProject {
+function normalizeDescription(project: Project, content: WorkPageContent) {
+  return (
+    project.excerpt ??
+    project.summary ??
+    project.description ??
+    content.fallbacks.projectDescription
+  );
+}
+
+function normalizeProject(project: Project, content: WorkPageContent): WorkProject {
   const coverImage = isMedia(project.coverImage) ? project.coverImage : null;
-  const category = isProjectCategory(project.category) ? project.category.title : "Project";
-  const coverSrc = normalizeImageUrl(coverImage?.sizes?.large?.url ?? coverImage?.url);
 
   return {
-    category,
     coverAlt: coverImage?.alt ?? `${project.title} architectural project image.`,
-    coverSrc,
+    coverSrc: normalizeImageUrl(coverImage?.sizes?.large?.url ?? coverImage?.url),
+    description: normalizeDescription(project, content),
     href: `/work/${project.slug}`,
     id: String(project.id),
-    location: normalizeLocation(project),
+    location: normalizeLocation(project, content),
     title: project.title,
-    year: project.year ? String(project.year) : "Undated",
+    year: project.year ? String(project.year) : content.fallbacks.year,
   };
 }
 
-async function getArchiveProjects(): Promise<ArchiveProject[]> {
+async function getArchiveProjects(content: WorkPageContent): Promise<WorkProject[]> {
   try {
     const payload = await getPayload({ config: configPromise });
     const projects = await payload.find({
@@ -79,154 +80,188 @@ async function getArchiveProjects(): Promise<ArchiveProject[]> {
       },
     });
 
-    return projects.docs.map(normalizeProject);
+    return projects.docs.map((project) => normalizeProject(project, content));
   } catch {
     return [];
   }
 }
 
-const layoutPatterns = [
-  {
-    aspect: "aspect-[5/4] sm:aspect-[16/9] lg:aspect-[21/10]",
-    image: "lg:col-span-10 lg:col-start-2",
-    metadata: "lg:col-span-2 lg:col-start-11",
-    sizes: "(min-width: 1024px) 83vw, 100vw",
-  },
-  {
-    aspect: "aspect-[4/5] sm:aspect-[3/2] lg:aspect-[4/5]",
-    image: "lg:col-span-6 lg:col-start-2",
-    metadata: "lg:col-span-2 lg:col-start-9",
-    sizes: "(min-width: 1024px) 50vw, 100vw",
-  },
-  {
-    aspect: "aspect-[4/5] sm:aspect-[16/10] lg:aspect-[16/9]",
-    image: "lg:col-span-9 lg:col-start-4",
-    metadata: "lg:col-span-2",
-    sizes: "(min-width: 1024px) 75vw, 100vw",
-  },
-  {
-    aspect: "aspect-[4/5] sm:aspect-[16/10] lg:aspect-[3/2]",
-    image: "lg:col-span-7 lg:col-start-5",
-    metadata: "lg:col-span-2 lg:col-start-2",
-    sizes: "(min-width: 1024px) 58vw, 100vw",
-  },
-];
+function Plate({
+  content,
+  index,
+  project,
+}: {
+  content: WorkPageContent;
+  index: number;
+  project: WorkProject;
+}) {
+  if (project.coverSrc) {
+    return (
+      <div className="work-plate work-plate--image">
+        <Image
+          alt={project.coverAlt}
+          className="image-editorial h-full w-full object-cover"
+          fill
+          sizes="(min-width: 1024px) 66vw, 100vw"
+          src={project.coverSrc}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      aria-label={`${content.archive.plateLabel} ${String(index + 1).padStart(2, "0")} placeholder`}
+      className="work-plate"
+    >
+      <div className="work-plate__label">
+        <span>
+          {content.archive.plateLabel} {String(index + 1).padStart(2, "0")}
+        </span>
+        <span>{content.archive.platePlaceholder}</span>
+      </div>
+    </div>
+  );
+}
+
+function ProjectPlateLink({
+  content,
+  index,
+  project,
+}: {
+  content: WorkPageContent;
+  index: number;
+  project: WorkProject;
+}) {
+  return (
+    <Link
+      aria-label={`View project: ${project.title}`}
+      className="work-plate-link"
+      href={project.href}
+    >
+      <Plate content={content} index={index} project={project} />
+    </Link>
+  );
+}
 
 export async function WorkArchive() {
-  const projects = await getArchiveProjects();
+  const content = await getWorkPageContent();
+  const projects = await getArchiveProjects(content);
+  const projectCount = String(projects.length).padStart(2, "0");
+  const years = projects
+    .map((project) => Number(project.year))
+    .filter((year) => Number.isFinite(year));
+  const yearRange =
+    years.length > 0
+      ? `${Math.min(...years)} - ${Math.max(...years)}`
+      : content.fallbacks.yearRange;
 
   return (
     <WorkArchiveMotion>
-      <Section className="bg-background pt-[calc(var(--section-spacing-large)+var(--space-20))]">
-        <Container>
-          <div
-            className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]"
-            data-work-reveal
-          >
-            <p className="type-label text-foreground-muted lg:col-span-3">
-              Work
-            </p>
+      <div className="work-page">
+        <div className="work-container work-main" aria-labelledby="work-title">
+          <section className="work-hero">
+            <p className="work-kicker">{content.hero.label}</p>
 
-            <div className="lg:col-span-7 lg:col-start-5">
-              <h1 className="type-display text-foreground">
-                A considered archive of spaces, materials, and atmosphere.
+            <div>
+              <h1 className="work-hero__title" id="work-title">
+                {content.hero.title}
               </h1>
 
-              <p className="mt-8 max-w-[620px] text-pretty text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground-secondary">
-                A selection of residential, hospitality, interior, and architectural work shaped
-                through proportion, restraint, and a close reading of place.
+              <p className="work-hero__intro">{content.hero.intro}</p>
+
+              <p className="work-hero__count">
+                {projectCount}{" "}
+                {projects.length === 1
+                  ? content.hero.singularProjectLabel
+                  : content.hero.pluralProjectLabel}{" "}
+                · {yearRange}
               </p>
-
-              {projects.length > 0 ? (
-                <p className="mt-10 type-label text-foreground-muted">
-                  {projects.length} {projects.length === 1 ? "Project" : "Projects"}
-                </p>
-              ) : null}
             </div>
-          </div>
-        </Container>
-      </Section>
+          </section>
 
-      <Section
-        className="bg-background py-[var(--section-spacing-large)] pt-[calc(var(--section-spacing-large)+var(--space-12))]"
-        spacing="none"
-      >
-        <Container>
-          {projects.length > 0 ? (
-            <div className="space-y-[clamp(var(--space-30),14vw,280px)]">
-              {projects.map((project, index) => {
-                const layout = layoutPatterns[index % layoutPatterns.length];
+          <section aria-label={content.archive.ariaLabel}>
+            {projects.length > 0 ? (
+              projects.map((project, index) => {
+                const number = String(index + 1).padStart(2, "0");
+                const isTemplateB = index % 2 === 1;
 
                 return (
                   <article
-                    className="grid gap-7 lg:grid-cols-12 lg:gap-[var(--grid-gap)]"
+                    className={isTemplateB ? "work-project work-project--b" : "work-project work-project--a"}
                     data-work-reveal
                     key={project.id}
                   >
-                    <div
-                      className={cn(
-                        "order-2 flex items-start justify-between gap-5 type-label text-foreground-muted lg:order-1 lg:block",
-                        layout.metadata,
-                      )}
-                    >
-                      <p aria-hidden="true" className="hidden font-display text-[length:var(--font-size-project-title)] leading-none text-foreground lg:block">
-                        {String(index + 1).padStart(2, "0")}
-                      </p>
-                      <p className="lg:mt-6">{project.category}</p>
-                      <p className="lg:mt-3">{project.location}</p>
-                      <p className="lg:mt-3">{project.year}</p>
-                    </div>
+                    {isTemplateB ? (
+                      <>
+                        <div className="work-project__copy">
+                          <div className="work-project__meta-row">
+                            <span className="work-project__number">No. {number}</span>
+                            <span>{project.location}</span>
+                            <span>{project.year}</span>
+                          </div>
 
-                    <div className={cn("order-1 lg:order-2", layout.image)}>
-                      <Link
-                        aria-label={`View project: ${project.title}`}
-                        className="plate-link group block"
-                        href={project.href}
-                      >
-                        <div
-                          className={cn(
-                            "editorial-image-frame relative overflow-hidden bg-surface",
-                            layout.aspect,
-                          )}
-                          data-work-image-frame
-                        >
-                          <Image
-                            alt={project.coverAlt}
-                            className="image-editorial h-full w-full object-cover transition-[opacity,transform] duration-slow ease-architectural-out group-hover:scale-[1.015] group-hover:opacity-95"
-                            data-work-image
-                            fill
-                            sizes={layout.sizes}
-                            src={project.coverSrc}
-                          />
-                        </div>
-
-                        <div className="mt-5 border-t border-border/60 pt-4">
-                          <h2 className="type-project-title text-foreground">
-                            <span className="plate-link-underline">{project.title}</span>
+                          <h2 className="work-project__title">
+                            <Link href={project.href}>{project.title}</Link>
                           </h2>
+
+                          <p className="work-project__description">{project.description}</p>
                         </div>
-                      </Link>
-                    </div>
+
+                        <ProjectPlateLink content={content} index={index} project={project} />
+                      </>
+                    ) : (
+                      <>
+                        <div className="work-project__meta-column">
+                          <span className="work-project__number">No. {number}</span>
+                          <span>{project.location}</span>
+                          <span>{project.year}</span>
+                        </div>
+
+                        <div>
+                          <ProjectPlateLink content={content} index={index} project={project} />
+
+                          <h2 className="work-project__title">
+                            <Link href={project.href}>{project.title}</Link>
+                          </h2>
+
+                          <p className="work-project__description">{project.description}</p>
+                        </div>
+                      </>
+                    )}
                   </article>
                 );
-              })}
-            </div>
-          ) : (
-            <div
-              className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]"
-              data-work-reveal
-            >
-              <p className="type-label text-foreground-muted lg:col-span-3">
-                Archive
-              </p>
+              })
+            ) : (
+              <article className="work-project work-project--a" data-work-reveal>
+                <div className="work-project__meta-column">
+                  <span className="work-project__number">{content.archive.emptyNumberLabel}</span>
+                  <span>{content.archive.emptyLocationLabel}</span>
+                  <span>{content.archive.emptyYearLabel}</span>
+                </div>
 
-              <p className="max-w-[620px] text-pretty text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground-secondary lg:col-span-6 lg:col-start-5">
-                Published projects will appear here once the CMS contains archive content.
-              </p>
-            </div>
-          )}
-        </Container>
-      </Section>
+                <div>
+                  <Plate
+                    content={content}
+                    index={0}
+                    project={{
+                      coverAlt: "Project archive placeholder.",
+                      coverSrc: null,
+                      description: "",
+                      href: "/work",
+                      id: "empty",
+                      location: content.archive.emptyLocationLabel,
+                      title: content.archive.emptyTitle,
+                      year: content.archive.emptyYearLabel,
+                    }}
+                  />
+                  <h2 className="work-project__title">{content.archive.emptyTitle}</h2>
+                </div>
+              </article>
+            )}
+          </section>
+        </div>
+      </div>
     </WorkArchiveMotion>
   );
 }

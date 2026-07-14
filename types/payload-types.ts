@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     'project-categories': ProjectCategory;
     projects: Project;
+    'contact-submissions': ContactSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
     'payload-preferences': PayloadPreference;
@@ -82,6 +83,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'project-categories': ProjectCategoriesSelect<false> | ProjectCategoriesSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
     'payload-preferences': PayloadPreferencesSelect<false> | PayloadPreferencesSelect<true>;
@@ -96,12 +98,24 @@ export interface Config {
     'contact-info': ContactInfo;
     navigation: Navigation;
     'seo-defaults': SeoDefault;
+    'home-page': HomePage;
+    'studio-page': StudioPage;
+    'contact-page': ContactPage;
+    'work-page': WorkPage;
+    'project-detail-settings': ProjectDetailSetting;
+    'contact-form-settings': ContactFormSetting;
   };
   globalsSelect: {
     'site-settings': SiteSettingsSelect<false> | SiteSettingsSelect<true>;
     'contact-info': ContactInfoSelect<false> | ContactInfoSelect<true>;
     navigation: NavigationSelect<false> | NavigationSelect<true>;
     'seo-defaults': SeoDefaultsSelect<false> | SeoDefaultsSelect<true>;
+    'home-page': HomePageSelect<false> | HomePageSelect<true>;
+    'studio-page': StudioPageSelect<false> | StudioPageSelect<true>;
+    'contact-page': ContactPageSelect<false> | ContactPageSelect<true>;
+    'work-page': WorkPageSelect<false> | WorkPageSelect<true>;
+    'project-detail-settings': ProjectDetailSettingsSelect<false> | ProjectDetailSettingsSelect<true>;
+    'contact-form-settings': ContactFormSettingsSelect<false> | ContactFormSettingsSelect<true>;
   };
   locale: null;
   widgets: {
@@ -293,6 +307,23 @@ export interface Project {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions".
+ */
+export interface ContactSubmission {
+  id: number;
+  name: string;
+  email: string;
+  projectType?: string | null;
+  estimatedBudget?: string | null;
+  timeline?: string | null;
+  message: string;
+  source?: string | null;
+  status?: ('new' | 'reviewed' | 'replied' | 'archived') | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv".
  */
 export interface PayloadKv {
@@ -330,6 +361,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'projects';
         value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'contact-submissions';
+        value: number | ContactSubmission;
       } | null);
   globalSlug?: string | null;
   user: {
@@ -513,6 +548,22 @@ export interface ProjectsSelect<T extends boolean = true> {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-submissions_select".
+ */
+export interface ContactSubmissionsSelect<T extends boolean = true> {
+  name?: T;
+  email?: T;
+  projectType?: T;
+  estimatedBudget?: T;
+  timeline?: T;
+  message?: T;
+  source?: T;
+  status?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "payload-kv_select".
  */
 export interface PayloadKvSelect<T extends boolean = true> {
@@ -638,6 +689,233 @@ export interface SeoDefault {
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page".
+ */
+export interface HomePage {
+  id: number;
+  hero: {
+    label?: string | null;
+    heading: string;
+    supportingText?: string | null;
+    image?: (number | null) | Media;
+    locationLine?: string | null;
+  };
+  selectedProjects?: {
+    label?: string | null;
+    heading?: string | null;
+    archiveLinkLabel?: string | null;
+  };
+  studioIntro?: {
+    label?: string | null;
+    statement?: string | null;
+    body?: string | null;
+    linkLabel?: string | null;
+    linkHref?: string | null;
+  };
+  featuredProject?: {
+    label?: string | null;
+    heading?: string | null;
+    linkLabel?: string | null;
+  };
+  contact?: {
+    label?: string | null;
+    statement?: string | null;
+    body?: string | null;
+  };
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    canonical?: string | null;
+    keywords?: string[] | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "studio-page".
+ */
+export interface StudioPage {
+  id: number;
+  hero?: {
+    label?: string | null;
+    statement?: string | null;
+  };
+  philosophy?: {
+    label?: string | null;
+    paragraphs?:
+      | {
+          text: string;
+          id?: string | null;
+        }[]
+      | null;
+  };
+  process?: {
+    label?: string | null;
+    statement?: string | null;
+  };
+  principles?:
+    | {
+        text: string;
+        id?: string | null;
+      }[]
+    | null;
+  information?:
+    | {
+        label: string;
+        value: string;
+        id?: string | null;
+      }[]
+    | null;
+  contactCta?: {
+    label?: string | null;
+    statement?: string | null;
+    linkLabel?: string | null;
+  };
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    canonical?: string | null;
+    keywords?: string[] | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-page".
+ */
+export interface ContactPage {
+  id: number;
+  hero?: {
+    label?: string | null;
+    statement?: string | null;
+  };
+  inquiry?: {
+    label?: string | null;
+    body?: string | null;
+  };
+  collaboration?: {
+    label?: string | null;
+    statement?: string | null;
+  };
+  closing?: {
+    label?: string | null;
+    statement?: string | null;
+  };
+  seo?: {
+    title?: string | null;
+    description?: string | null;
+    image?: (number | null) | Media;
+    canonical?: string | null;
+    keywords?: string[] | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "work-page".
+ */
+export interface WorkPage {
+  id: number;
+  hero?: {
+    label?: string | null;
+    title?: string | null;
+    intro?: string | null;
+    singularProjectLabel?: string | null;
+    pluralProjectLabel?: string | null;
+  };
+  archive?: {
+    ariaLabel?: string | null;
+    emptyNumberLabel?: string | null;
+    emptyLocationLabel?: string | null;
+    emptyYearLabel?: string | null;
+    emptyTitle?: string | null;
+    plateLabel?: string | null;
+    platePlaceholder?: string | null;
+  };
+  fallbacks?: {
+    location?: string | null;
+    year?: string | null;
+    yearRange?: string | null;
+    projectDescription?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-detail-settings".
+ */
+export interface ProjectDetailSetting {
+  id: number;
+  labels?: {
+    statement?: string | null;
+    services?: string | null;
+    area?: string | null;
+    architect?: string | null;
+    status?: string | null;
+    materials?: string | null;
+    nextProject?: string | null;
+  };
+  fallbacks?: {
+    category?: string | null;
+    location?: string | null;
+    year?: string | null;
+    description?: string | null;
+  };
+  serviceLabels?: {
+    architecture?: string | null;
+    interiorDesign?: string | null;
+    masterPlanning?: string | null;
+    furnitureDesign?: string | null;
+    landscape?: string | null;
+  };
+  statusLabels?: {
+    built?: string | null;
+    completed?: string | null;
+    concept?: string | null;
+    inProgress?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-form-settings".
+ */
+export interface ContactFormSetting {
+  id: number;
+  labels?: {
+    email?: string | null;
+    city?: string | null;
+    country?: string | null;
+    name?: string | null;
+    projectType?: string | null;
+    estimatedBudget?: string | null;
+    timeline?: string | null;
+    message?: string | null;
+    company?: string | null;
+    submit?: string | null;
+    studioInformation?: string | null;
+  };
+  messages?: {
+    defaultNote?: string | null;
+    success?: string | null;
+    emailError?: string | null;
+    requiredError?: string | null;
+  };
+  placeholders?: {
+    message?: string | null;
+  };
+  updatedAt?: string | null;
+  createdAt?: string | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "site-settings_select".
  */
 export interface SiteSettingsSelect<T extends boolean = true> {
@@ -713,6 +991,285 @@ export interface SeoDefaultsSelect<T extends boolean = true> {
   titleTemplate?: T;
   defaultDescription?: T;
   defaultImage?: T;
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "home-page_select".
+ */
+export interface HomePageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        label?: T;
+        heading?: T;
+        supportingText?: T;
+        image?: T;
+        locationLine?: T;
+      };
+  selectedProjects?:
+    | T
+    | {
+        label?: T;
+        heading?: T;
+        archiveLinkLabel?: T;
+      };
+  studioIntro?:
+    | T
+    | {
+        label?: T;
+        statement?: T;
+        body?: T;
+        linkLabel?: T;
+        linkHref?: T;
+      };
+  featuredProject?:
+    | T
+    | {
+        label?: T;
+        heading?: T;
+        linkLabel?: T;
+      };
+  contact?:
+    | T
+    | {
+        label?: T;
+        statement?: T;
+        body?: T;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        canonical?: T;
+        keywords?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "studio-page_select".
+ */
+export interface StudioPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        label?: T;
+        statement?: T;
+      };
+  philosophy?:
+    | T
+    | {
+        label?: T;
+        paragraphs?:
+          | T
+          | {
+              text?: T;
+              id?: T;
+            };
+      };
+  process?:
+    | T
+    | {
+        label?: T;
+        statement?: T;
+      };
+  principles?:
+    | T
+    | {
+        text?: T;
+        id?: T;
+      };
+  information?:
+    | T
+    | {
+        label?: T;
+        value?: T;
+        id?: T;
+      };
+  contactCta?:
+    | T
+    | {
+        label?: T;
+        statement?: T;
+        linkLabel?: T;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        canonical?: T;
+        keywords?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-page_select".
+ */
+export interface ContactPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        label?: T;
+        statement?: T;
+      };
+  inquiry?:
+    | T
+    | {
+        label?: T;
+        body?: T;
+      };
+  collaboration?:
+    | T
+    | {
+        label?: T;
+        statement?: T;
+      };
+  closing?:
+    | T
+    | {
+        label?: T;
+        statement?: T;
+      };
+  seo?:
+    | T
+    | {
+        title?: T;
+        description?: T;
+        image?: T;
+        canonical?: T;
+        keywords?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "work-page_select".
+ */
+export interface WorkPageSelect<T extends boolean = true> {
+  hero?:
+    | T
+    | {
+        label?: T;
+        title?: T;
+        intro?: T;
+        singularProjectLabel?: T;
+        pluralProjectLabel?: T;
+      };
+  archive?:
+    | T
+    | {
+        ariaLabel?: T;
+        emptyNumberLabel?: T;
+        emptyLocationLabel?: T;
+        emptyYearLabel?: T;
+        emptyTitle?: T;
+        plateLabel?: T;
+        platePlaceholder?: T;
+      };
+  fallbacks?:
+    | T
+    | {
+        location?: T;
+        year?: T;
+        yearRange?: T;
+        projectDescription?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "project-detail-settings_select".
+ */
+export interface ProjectDetailSettingsSelect<T extends boolean = true> {
+  labels?:
+    | T
+    | {
+        statement?: T;
+        services?: T;
+        area?: T;
+        architect?: T;
+        status?: T;
+        materials?: T;
+        nextProject?: T;
+      };
+  fallbacks?:
+    | T
+    | {
+        category?: T;
+        location?: T;
+        year?: T;
+        description?: T;
+      };
+  serviceLabels?:
+    | T
+    | {
+        architecture?: T;
+        interiorDesign?: T;
+        masterPlanning?: T;
+        furnitureDesign?: T;
+        landscape?: T;
+      };
+  statusLabels?:
+    | T
+    | {
+        built?: T;
+        completed?: T;
+        concept?: T;
+        inProgress?: T;
+      };
+  updatedAt?: T;
+  createdAt?: T;
+  globalType?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "contact-form-settings_select".
+ */
+export interface ContactFormSettingsSelect<T extends boolean = true> {
+  labels?:
+    | T
+    | {
+        email?: T;
+        city?: T;
+        country?: T;
+        name?: T;
+        projectType?: T;
+        estimatedBudget?: T;
+        timeline?: T;
+        message?: T;
+        company?: T;
+        submit?: T;
+        studioInformation?: T;
+      };
+  messages?:
+    | T
+    | {
+        defaultNote?: T;
+        success?: T;
+        emailError?: T;
+        requiredError?: T;
+      };
+  placeholders?:
+    | T
+    | {
+        message?: T;
+      };
   updatedAt?: T;
   createdAt?: T;
   globalType?: T;

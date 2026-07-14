@@ -6,32 +6,44 @@ import { getPayload } from "payload";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { HomeSelectedProjectsMotion } from "@/features/home/HomeSelectedProjectsMotion";
+import type { HomePageContent } from "@/lib/cms/siteContent";
 import type { Media, Project, ProjectCategory } from "@/types/payload-types";
 
 interface SelectedProject {
   category: string;
   coverAlt: string;
   coverSrc: string;
+  excerpt: string;
   href: string;
   id: string;
+  locationLine: string;
   title: string;
   year: string;
 }
 
+/**
+ * Each plate keeps its asymmetric placement; `aside` fills the counter-column
+ * with quiet marginalia (location + excerpt) so the empty margin reads as a
+ * composed monograph margin, not an unfinished row.
+ */
 const platePatterns = [
   {
+    aside: "lg:col-span-3 lg:col-start-10",
     image: "lg:col-span-8 lg:col-start-1",
     media: "aspect-[3/2]",
   },
   {
+    aside: "lg:col-span-3 lg:col-start-1",
     image: "lg:col-span-6 lg:col-start-7",
     media: "aspect-[4/5]",
   },
   {
+    aside: "lg:col-span-2 lg:col-start-11",
     image: "lg:col-span-7 lg:col-start-3",
     media: "aspect-[16/10]",
   },
   {
+    aside: "lg:col-span-3 lg:col-start-8",
     image: "lg:col-span-6 lg:col-start-1",
     media: "aspect-[3/2]",
   },
@@ -43,7 +55,10 @@ const placeholderProjects: SelectedProject[] = [
     coverAlt:
       "Warm minimal architectural interior opening to a calm courtyard with stone, plaster, wood, and soft morning light.",
     coverSrc: "/images/home-hero-placeholder.png",
+    excerpt:
+      "Three wings around a planted court; rooms open to still water, shade, and morning light.",
     href: "/work/courtyard-residence",
+    locationLine: "Tashkent, UZ",
     id: "placeholder-courtyard-residence",
     title: "Courtyard Residence",
     year: "2026",
@@ -53,7 +68,10 @@ const placeholderProjects: SelectedProject[] = [
     coverAlt:
       "Warm minimal architectural interior opening to a calm courtyard with stone, plaster, wood, and soft morning light.",
     coverSrc: "/images/home-hero-placeholder.png",
+    excerpt:
+      "A limestone apartment pared back to shadow lines, warm plaster, and a single long bench.",
     href: "/work/stone-interior",
+    locationLine: "Samarkand, UZ",
     id: "placeholder-stone-interior",
     title: "Stone Apartment",
     year: "2025",
@@ -63,7 +81,10 @@ const placeholderProjects: SelectedProject[] = [
     coverAlt:
       "Warm minimal architectural interior opening to a calm courtyard with stone, plaster, wood, and soft morning light.",
     coverSrc: "/images/home-hero-placeholder.png",
+    excerpt:
+      "North-lit galleries under deep concrete beams; art, not architecture, holds the room.",
     href: "/work/house-of-light",
+    locationLine: "Almaty, KZ",
     id: "placeholder-light-house",
     title: "North Light Gallery",
     year: "2024",
@@ -73,7 +94,10 @@ const placeholderProjects: SelectedProject[] = [
     coverAlt:
       "Warm minimal architectural interior opening to a calm courtyard with stone, plaster, wood, and soft morning light.",
     coverSrc: "/images/home-hero-placeholder.png",
+    excerpt:
+      "Guest rooms carved into a terraced massif, each with a shaded loggia toward the valley.",
     href: "/work/limestone-hotel",
+    locationLine: "Bukhara, UZ",
     id: "placeholder-limestone-hotel",
     title: "Limestone Hotel",
     year: "2023",
@@ -105,12 +129,17 @@ function normalizeProject(project: Project): SelectedProject {
   const category = isProjectCategory(project.category) ? project.category.title : "Project";
   const coverSrc = normalizeImageUrl(coverImage?.sizes?.large?.url ?? coverImage?.url);
 
+  const locationLine =
+    [project.city, project.country].filter(Boolean).join(", ") || project.location || "";
+
   return {
     category,
     coverAlt: coverImage?.alt ?? `${project.title} architectural project image.`,
     coverSrc,
+    excerpt: project.excerpt ?? project.tagline ?? project.shortDescription ?? "",
     href: `/work/${project.slug}`,
     id: String(project.id),
+    locationLine,
     title: project.title,
     year: project.year ? String(project.year) : "Undated",
   };
@@ -150,11 +179,15 @@ async function getSelectedProjects(): Promise<SelectedProject[]> {
   }
 }
 
-export async function HomeSelectedProjects() {
+interface HomeSelectedProjectsProps {
+  content?: HomePageContent["selectedProjects"];
+}
+
+export async function HomeSelectedProjects({ content }: HomeSelectedProjectsProps) {
   const projects = await getSelectedProjects();
 
   return (
-    <Section className="bg-background py-[clamp(var(--space-24),10vw,var(--space-40))]" spacing="none">
+    <Section className="bg-background" spacing="medium">
       <HomeSelectedProjectsMotion>
         <Container>
           <div
@@ -163,13 +196,13 @@ export async function HomeSelectedProjects() {
           >
             <div className="flex items-center gap-8 lg:col-span-3">
               <p className="type-label text-foreground-muted">
-                Selected Work
+                {content?.label ?? "Selected Work"}
               </p>
               <span className="hidden h-px flex-1 bg-border lg:block" aria-hidden="true" />
             </div>
             <div className="lg:col-span-5 lg:col-start-5">
               <h2 className="type-statement text-foreground">
-                A quiet sequence of spaces shaped by proportion, material, and light.
+                {content?.heading ?? "A quiet sequence of spaces shaped by proportion, material, and light."}
               </h2>
             </div>
           </div>
@@ -180,7 +213,12 @@ export async function HomeSelectedProjects() {
 
               return (
                 <article
-                  className="grid lg:grid-cols-12 lg:gap-[var(--grid-gap)]"
+                  className={[
+                    "grid lg:grid-cols-12 lg:gap-[var(--grid-gap)]",
+                    index === 1 && "mb-[clamp(100px,8vw,150px)]",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
                   key={project.id}
                 >
                   <Link
@@ -201,9 +239,9 @@ export async function HomeSelectedProjects() {
                       />
                     </div>
 
-                    <div className="mt-5 grid gap-4 border-t border-border/60 pt-4 sm:grid-cols-[1fr_auto] sm:items-start">
+                    <div className="mt-10 grid gap-4 border-t border-border/60 pt-4 sm:grid-cols-[1fr_auto] sm:items-start">
                       <div className="flex items-start gap-5">
-                        <span className="font-display text-[length:var(--font-size-project-title)] leading-none text-foreground">
+                        <span className="font-display text-[length:var(--font-size-project-title)] leading-none text-foreground-secondary">
                           {String(index + 1).padStart(2, "0")}
                         </span>
                         <h3 className="type-project-title text-foreground">
@@ -220,6 +258,29 @@ export async function HomeSelectedProjects() {
                       </p>
                     </div>
                   </Link>
+
+                  {(project.locationLine || project.excerpt) && (
+                    <aside className={`relative hidden lg:row-start-1 lg:block ${pattern.aside}`}>
+                      {/*
+                        The sticky wrapper must stay transform-free: the reveal
+                        animates the inner block instead, otherwise the residual
+                        GSAP transform would become the containing block and
+                        break position: sticky.
+                      */}
+                      <div className="lg:sticky lg:top-[calc(var(--space-24)+var(--space-8))]">
+                        <div className="border-t border-border/60 pt-4" data-project-marginalia>
+                          {project.locationLine && (
+                            <p className="type-label text-foreground-muted">{project.locationLine}</p>
+                          )}
+                          {project.excerpt && (
+                            <p className="mt-3 max-w-[34ch] text-pretty type-caption text-foreground-secondary">
+                              {project.excerpt}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    </aside>
+                  )}
                 </article>
               );
             })}
@@ -230,7 +291,7 @@ export async function HomeSelectedProjects() {
               className="plate-link inline-flex type-label text-foreground"
               href="/work"
             >
-              <span className="plate-link-underline">View the archive &rarr;</span>
+              <span className="plate-link-underline">{content?.archiveLinkLabel ?? "View the archive →"}</span>
             </Link>
           </div>
         </Container>

@@ -7,8 +7,19 @@ import { useCallback, useEffect, useId, useRef, useState } from "react";
 import { FullscreenMenu } from "@/components/navigation/FullscreenMenu";
 import { MenuButton } from "@/components/navigation/MenuButton";
 import { Navigation } from "@/components/navigation/Navigation";
+import type { NavigationItem } from "@/lib/constants/navigation";
 
-export function Header() {
+interface HeaderProps {
+  menuDescription?: string;
+  navigationItems?: NavigationItem[];
+  siteName?: string;
+}
+
+export function Header({
+  menuDescription,
+  navigationItems,
+  siteName = "Arkhitecture",
+}: HeaderProps) {
   const menuId = useId();
   const pathname = usePathname();
   const previousPathname = useRef(pathname);
@@ -53,8 +64,13 @@ export function Header() {
     const hero = document.querySelector<HTMLElement>("[data-hero-theme='dark']");
 
     if (!hero) {
-      setIsOverDarkHero(false);
-      return;
+      const frame = window.requestAnimationFrame(() => {
+        setIsOverDarkHero(false);
+      });
+
+      return () => {
+        window.cancelAnimationFrame(frame);
+      };
     }
 
     const observer = new IntersectionObserver(
@@ -92,12 +108,13 @@ export function Header() {
             href="/"
             onClick={closeMenu}
           >
-            Arkhitecture
+            {siteName}
           </Link>
 
           <Navigation
             className="hidden lg:block"
             itemClassName="nav-link nav-text"
+            items={navigationItems}
           />
 
           <MenuButton
@@ -111,7 +128,14 @@ export function Header() {
         </div>
       </header>
 
-      <FullscreenMenu id={menuId} isOpen={isMenuOpen} onClose={closeMenu} />
+      <FullscreenMenu
+        description={menuDescription}
+        id={menuId}
+        isOpen={isMenuOpen}
+        items={navigationItems}
+        onClose={closeMenu}
+        siteName={siteName}
+      />
     </>
   );
 }

@@ -5,6 +5,7 @@ import { Section } from "@/components/layout/Section";
 import { EditorialStatement } from "@/components/typography/EditorialStatement";
 import { SignatureExperienceSection } from "@/features/signature-experience/components/SignatureExperienceSection";
 import { StudioPageMotion } from "@/features/studio/StudioPageMotion";
+import type { ContactDetails, StudioPageContent } from "@/lib/cms/siteContent";
 
 const philosophyText = [
   "The studio works from the belief that architecture should become quieter as it becomes more precise. Each project begins with listening: to the site, to the pace of daily life, to climate, light, material, and the rituals that will eventually occupy the space.",
@@ -35,7 +36,17 @@ const studioInfo = [
   },
 ];
 
-export function StudioPage() {
+interface StudioPageProps {
+  contact?: ContactDetails;
+  content?: StudioPageContent;
+}
+
+export function StudioPage({ contact, content }: StudioPageProps) {
+  const philosophy = content?.philosophy.paragraphs ?? philosophyText;
+  const principleItems = content?.principles ?? principles;
+  const information = content?.information ?? studioInfo;
+  const contactEmail = contact?.email ?? "studio@arkhitecture.com";
+
   return (
     <StudioPageMotion>
       <Section
@@ -48,7 +59,7 @@ export function StudioPage() {
               className="type-label text-foreground-muted lg:col-span-2"
               data-studio-reveal
             >
-              Studio
+              {content?.hero.label ?? "Studio"}
             </p>
 
             <EditorialStatement
@@ -56,7 +67,8 @@ export function StudioPage() {
               className="type-display lg:col-span-9 lg:col-start-4"
               data-studio-reveal
             >
-              We design spaces through atmosphere, restraint, and a careful reading of context.
+              {content?.hero.statement ??
+                "We design spaces through atmosphere, restraint, and a careful reading of context."}
             </EditorialStatement>
           </div>
         </Container>
@@ -69,11 +81,11 @@ export function StudioPage() {
               className="type-label text-foreground-muted lg:col-span-2"
               data-studio-reveal
             >
-              Philosophy
+              {content?.philosophy.label ?? "Philosophy"}
             </p>
 
             <div className="lg:col-span-7 lg:col-start-5" data-studio-reveal>
-              {philosophyText.map((paragraph, index) =>
+              {philosophy.map((paragraph, index) =>
                 index === 0 ? (
                   <p className="type-statement text-foreground" key={paragraph}>
                     {paragraph}
@@ -99,14 +111,15 @@ export function StudioPage() {
               className="type-label text-foreground-muted lg:col-span-2"
               data-studio-reveal
             >
-              The Process
+              {content?.process.label ?? "The Process"}
             </p>
 
             <p
               className="max-w-[720px] type-statement text-foreground lg:col-span-8 lg:col-start-4"
               data-studio-reveal
             >
-              Six layers, from first trace to atmosphere. How every project is drawn into being.
+              {content?.process.statement ??
+                "Six layers, from first trace to atmosphere. How every project is drawn into being."}
             </p>
           </div>
         </Container>
@@ -125,7 +138,7 @@ export function StudioPage() {
             </p>
 
             <ul className="space-y-5 lg:col-span-8 lg:col-start-4" data-studio-reveal>
-              {principles.map((principle, index) => (
+              {principleItems.map((principle, index) => (
                 <li
                   className="grid grid-cols-[3ch_1fr] gap-5 border-t border-border pt-5 text-[length:var(--font-size-body-large)] leading-[var(--line-height-body-large)] text-foreground"
                   key={principle}
@@ -152,7 +165,7 @@ export function StudioPage() {
             </p>
 
             <dl className="grid gap-8 md:grid-cols-3 lg:col-span-9 lg:col-start-4 lg:gap-[var(--grid-gap)]">
-              {studioInfo.map((item) => (
+              {information.map((item) => (
                 <div className="border-t border-border pt-5" data-studio-reveal key={item.label}>
                   <dt className="type-label text-foreground-muted">
                     {item.label}
@@ -174,20 +187,21 @@ export function StudioPage() {
             data-studio-reveal
           >
             <p className="type-label text-foreground-muted lg:col-span-3">
-              Contact
+              {content?.contactCta.label ?? "Contact"}
             </p>
 
             <div className="lg:col-span-7 lg:col-start-5">
               <h2 className="type-section-heading text-foreground">
-                Begin with a place, a question, or a quiet ambition for how a space should feel.
+                {content?.contactCta.statement ??
+                  "Begin with a place, a question, or a quiet ambition for how a space should feel."}
               </h2>
 
               <Link
                 className="group mt-10 inline-flex text-[length:var(--font-size-ui)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] text-foreground transition-opacity duration-base ease-architectural-out hover:opacity-65 focus-visible:text-accent"
-                href="mailto:studio@arkhitecture.com?subject=Studio%20Inquiry"
+                href={`mailto:${contactEmail}?subject=Studio%20Inquiry`}
               >
                 <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:100%_1px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-base ease-architectural-out group-hover:bg-[length:0%_1px] group-focus-visible:bg-[length:0%_1px]">
-                  Start a conversation
+                  {content?.contactCta.linkLabel ?? "Start a conversation"}
                 </span>
               </Link>
             </div>

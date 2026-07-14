@@ -6,6 +6,7 @@ import { getPayload } from "payload";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { HomeFeaturedProjectMotion } from "@/features/home/HomeFeaturedProjectMotion";
+import type { HomePageContent } from "@/lib/cms/siteContent";
 import type { Media, Project, ProjectCategory } from "@/types/payload-types";
 
 interface FeaturedProject {
@@ -112,23 +113,27 @@ async function getFeaturedProject(): Promise<FeaturedProject> {
   }
 }
 
-export async function HomeFeaturedProject() {
+interface HomeFeaturedProjectProps {
+  content?: HomePageContent["featuredProject"];
+}
+
+export async function HomeFeaturedProject({ content }: HomeFeaturedProjectProps) {
   const project = await getFeaturedProject();
 
   return (
-    <Section className="bg-background py-[clamp(var(--space-20),8vw,var(--space-30))]" spacing="none">
+    <Section className="bg-background" spacing="medium">
       <HomeFeaturedProjectMotion>
         <Container>
           <div className="grid gap-8 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
             <div className="flex items-center gap-8 lg:col-span-3" data-featured-project-text>
               <p className="type-label text-foreground-muted">
-                Featured Project
+                {content?.label ?? "Featured Project"}
               </p>
               <span className="hidden h-px flex-1 bg-border lg:block" aria-hidden="true" />
             </div>
             <div className="lg:col-span-4 lg:col-start-5" data-featured-project-text>
               <h2 className="type-section-heading text-foreground">
-                A slower look at one selected work.
+                {content?.heading ?? "A slower look at one selected work."}
               </h2>
             </div>
           </div>
@@ -184,7 +189,7 @@ export async function HomeFeaturedProject() {
                   className="plate-link inline-flex type-label text-foreground"
                   href={project.href}
                 >
-                  <span className="plate-link-underline">View Project &rarr;</span>
+                  <span className="plate-link-underline">{content?.linkLabel ?? "View Project →"}</span>
                 </Link>
               </div>
             </div>

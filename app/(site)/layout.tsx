@@ -5,6 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { RouteScrollRestoration } from "@/components/navigation/RouteScrollRestoration";
 import { StructuredData } from "@/components/seo/StructuredData";
+import { getSiteChromeContent } from "@/lib/cms/siteContent";
 import { globalMetadata } from "@/lib/seo/metadata";
 import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/structuredData";
 import { MotionProvider } from "@/providers/MotionProvider";
@@ -34,7 +35,9 @@ interface SiteLayoutProps {
   children: React.ReactNode;
 }
 
-export default function SiteLayout({ children }: SiteLayoutProps) {
+export default async function SiteLayout({ children }: SiteLayoutProps) {
+  const siteContent = await getSiteChromeContent();
+
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body>
@@ -47,7 +50,11 @@ export default function SiteLayout({ children }: SiteLayoutProps) {
         <StructuredData data={[organizationJsonLd(), websiteJsonLd()]} />
         <MotionProvider>
           <RouteScrollRestoration />
-          <Header />
+          <Header
+            menuDescription={siteContent.settings.footerDescription}
+            navigationItems={siteContent.navigationItems}
+            siteName={siteContent.settings.siteName}
+          />
           {children}
           <Footer />
         </MotionProvider>
