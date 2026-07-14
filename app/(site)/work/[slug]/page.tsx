@@ -13,6 +13,9 @@ interface ProjectPageProps {
   }>;
 }
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 const serviceLabels: Record<NonNullable<Project["services"]>[number], string> = {
   architecture: "Architecture",
   "furniture-design": "Furniture Design",

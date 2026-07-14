@@ -8,6 +8,9 @@ export const metadata = createPageMetadata({
   path: "/work",
 });
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default function WorkPage() {
   return (
     <Page>

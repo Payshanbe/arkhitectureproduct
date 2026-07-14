@@ -9,6 +9,9 @@ export const metadata = createPageMetadata({
   path: "/studio",
 });
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 export default async function StudioRoute() {
   const [content, siteContent] = await Promise.all([
     getStudioPageContent(),

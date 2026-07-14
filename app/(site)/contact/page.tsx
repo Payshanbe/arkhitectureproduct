@@ -13,6 +13,9 @@ export const metadata = createPageMetadata({
   path: "/contact",
 });
 
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
+
 interface ContactRouteProps {
   searchParams?: Promise<{
     error?: string;
