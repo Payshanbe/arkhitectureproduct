@@ -6,6 +6,7 @@ import { getPayload } from "payload";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { HomeFeaturedProjectMotion } from "@/features/home/HomeFeaturedProjectMotion";
+import { normalizePayloadImageUrl } from "@/lib/cms/media";
 import type { HomePageContent } from "@/lib/cms/siteContent";
 import type { Media, Project, ProjectCategory } from "@/types/payload-types";
 
@@ -43,22 +44,13 @@ function isProjectCategory(value: Project["category"]): value is ProjectCategory
   return typeof value === "object" && value !== null;
 }
 
-function normalizeImageUrl(url?: string | null) {
-  if (!url) {
-    return placeholderFeaturedProject.coverSrc;
-  }
-
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
-}
-
 function normalizeProject(project: Project): FeaturedProject {
   const coverImage = isMedia(project.coverImage) ? project.coverImage : null;
   const category = isProjectCategory(project.category) ? project.category.title : "Project";
-  const coverSrc = normalizeImageUrl(coverImage?.sizes?.large?.url ?? coverImage?.url);
+  const coverSrc = normalizePayloadImageUrl(
+    coverImage?.sizes?.large?.url ?? coverImage?.url,
+    placeholderFeaturedProject.coverSrc,
+  );
   const location = [project.location, project.country].filter(Boolean).join(", ");
 
   return {

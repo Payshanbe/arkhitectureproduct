@@ -8,6 +8,7 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { ProjectDetailMotion } from "@/features/work/ProjectDetailMotion";
+import { normalizePayloadImageUrl } from "@/lib/cms/media";
 import {
   getProjectDetailSettings,
   type ProjectDetailSettingsContent,
@@ -84,18 +85,6 @@ function isProjectCategory(value: Project["category"]): value is ProjectCategory
 
 type ProjectImageInput = NonNullable<Project["gallery"]>[number];
 
-function normalizeImageUrl(url?: string | null) {
-  if (!url) {
-    return "/images/home-hero-placeholder.png";
-  }
-
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
-}
-
 function normalizeLocation(project: Project, settings: ProjectDetailSettingsContent) {
   const primaryLocation = project.city ?? project.location;
   const location = [primaryLocation, project.country].filter(Boolean).join(", ");
@@ -148,7 +137,10 @@ function normalizeGalleryImage(item: ProjectImageInput, index: number, title: st
     caption: item.caption ?? image?.caption ?? undefined,
     id: item.id ?? `${title}-${index}`,
     orientation: item.orientation ?? image?.orientation ?? undefined,
-    src: normalizeImageUrl(image?.sizes?.large?.url ?? image?.url),
+    src: normalizePayloadImageUrl(
+      image?.sizes?.large?.url ?? image?.url,
+      "/images/home-hero-placeholder.png",
+    ),
   };
 }
 
@@ -169,7 +161,10 @@ function normalizeProject(
     caption: coverImage?.caption ?? undefined,
     id: `${project.id}-cover`,
     orientation: coverImage?.orientation ?? undefined,
-    src: normalizeImageUrl(coverImage?.sizes?.large?.url ?? coverImage?.url),
+    src: normalizePayloadImageUrl(
+      coverImage?.sizes?.large?.url ?? coverImage?.url,
+      "/images/home-hero-placeholder.png",
+    ),
   };
 
   return {

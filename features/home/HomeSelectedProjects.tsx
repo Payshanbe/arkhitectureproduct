@@ -6,6 +6,7 @@ import { getPayload } from "payload";
 import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { HomeSelectedProjectsMotion } from "@/features/home/HomeSelectedProjectsMotion";
+import { normalizePayloadImageUrl } from "@/lib/cms/media";
 import type { HomePageContent } from "@/lib/cms/siteContent";
 import type { Media, Project, ProjectCategory } from "@/types/payload-types";
 
@@ -112,22 +113,13 @@ function isProjectCategory(value: Project["category"]): value is ProjectCategory
   return typeof value === "object" && value !== null;
 }
 
-function normalizeImageUrl(url?: string | null) {
-  if (!url) {
-    return "/images/home-hero-placeholder.png";
-  }
-
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
-}
-
 function normalizeProject(project: Project): SelectedProject {
   const coverImage = isMedia(project.coverImage) ? project.coverImage : null;
   const category = isProjectCategory(project.category) ? project.category.title : "Project";
-  const coverSrc = normalizeImageUrl(coverImage?.sizes?.large?.url ?? coverImage?.url);
+  const coverSrc = normalizePayloadImageUrl(
+    coverImage?.sizes?.large?.url ?? coverImage?.url,
+    "/images/home-hero-placeholder.png",
+  );
 
   const locationLine =
     [project.city, project.country].filter(Boolean).join(", ") || project.location || "";

@@ -4,6 +4,7 @@ import Link from "next/link";
 import { getPayload } from "payload";
 
 import { WorkArchiveMotion } from "@/features/work/WorkArchiveMotion";
+import { normalizePayloadImageUrl } from "@/lib/cms/media";
 import { getWorkPageContent, type WorkPageContent } from "@/lib/cms/siteContent";
 import type { Media, Project } from "@/types/payload-types";
 
@@ -20,18 +21,6 @@ interface WorkProject {
 
 function isMedia(value: Project["coverImage"]): value is Media {
   return typeof value === "object" && value !== null;
-}
-
-function normalizeImageUrl(url?: string | null) {
-  if (!url) {
-    return null;
-  }
-
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
 }
 
 function normalizeLocation(project: Project, content: WorkPageContent) {
@@ -55,7 +44,7 @@ function normalizeProject(project: Project, content: WorkPageContent): WorkProje
 
   return {
     coverAlt: coverImage?.alt ?? `${project.title} architectural project image.`,
-    coverSrc: normalizeImageUrl(coverImage?.sizes?.large?.url ?? coverImage?.url),
+    coverSrc: normalizePayloadImageUrl(coverImage?.sizes?.large?.url ?? coverImage?.url, ""),
     description: normalizeDescription(project, content),
     href: `/work/${project.slug}`,
     id: String(project.id),

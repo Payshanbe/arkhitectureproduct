@@ -1,6 +1,7 @@
 import configPromise from "@payload-config";
 import { getPayload } from "payload";
 
+import { normalizePayloadImageUrl } from "@/lib/cms/media";
 import type { NavigationItem } from "@/lib/constants/navigation";
 import { primaryNavigation } from "@/lib/constants/navigation";
 import type { Media } from "@/types/payload-types";
@@ -429,24 +430,15 @@ function isMediaLike(value: unknown): value is MediaLike {
   return typeof value === "object" && value !== null;
 }
 
-function normalizeImageUrl(url?: null | string) {
-  if (!url) {
-    return fallbackHomePage.hero.imageSrc;
-  }
-
-  try {
-    return new URL(url).pathname;
-  } catch {
-    return url;
-  }
-}
-
 function mediaImage(value: unknown) {
   const image = isMediaLike(value) ? value : null;
 
   return {
     alt: text(image?.alt, fallbackHomePage.hero.imageAlt),
-    src: normalizeImageUrl(image?.sizes?.large?.url ?? image?.url),
+    src: normalizePayloadImageUrl(
+      image?.sizes?.large?.url ?? image?.url,
+      fallbackHomePage.hero.imageSrc,
+    ),
   };
 }
 
