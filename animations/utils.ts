@@ -44,8 +44,8 @@ export function defaultScrollTrigger(
 
   return {
     invalidateOnRefresh: true,
-    once: true,
     start: "top 85%",
+    toggleActions: "play none none none",
     trigger,
     ...scrollTrigger,
   };
