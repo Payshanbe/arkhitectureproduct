@@ -6,19 +6,27 @@ This project can be deployed on Vercel with Neon as the production PostgreSQL da
 
 - Vercel: Next.js hosting and serverless runtime.
 - Neon: PostgreSQL database for Payload CMS.
-- Current media mode: committed files in `public/media`.
+- Local media mode: files in `public/media` when no Blob token is configured.
+- Production media mode: Vercel Blob through Payload's official storage adapter.
 
-## Current Media Limitation
+## Media Storage
 
-Payload media currently uses local uploads:
+Payload keeps local uploads for development:
 
 ```ts
 staticDir: "public/media"
 ```
 
-This is acceptable for committed placeholder/demo media, but it is not a durable production upload strategy on Vercel. New files uploaded through Payload admin may not persist reliably across deployments/serverless instances.
+When `BLOB_READ_WRITE_TOKEN` is present, the Vercel Blob adapter disables local writes and stores new Payload uploads in durable object storage. Client uploads are enabled to avoid Vercel's server upload size limit.
 
-Before real client content, move media uploads to durable object storage such as Vercel Blob, S3, Cloudinary, or Supabase Storage.
+Before enabling Blob in production, copy the committed media files to the connected store so existing Payload records continue to resolve:
+
+```bash
+npm run media:migrate:vercel-blob -- dry-run
+npm run media:migrate:vercel-blob
+```
+
+The migration keeps existing filenames and skips blobs that are already present, so it can be run again safely.
 
 ## Required Vercel Environment Variables
 
@@ -28,9 +36,10 @@ Add these in Vercel Project Settings -> Environment Variables:
 DATABASE_URI=postgresql://user:password@host.neon.tech/dbname?sslmode=require
 PAYLOAD_SECRET=your-secure-random-string-at-least-32-characters
 NEXT_PUBLIC_SITE_URL=https://your-project.vercel.app
+BLOB_READ_WRITE_TOKEN=vercel_blob_rw_store_random-secret
 ```
 
-Do not expose `DATABASE_URI` or `PAYLOAD_SECRET` to the browser. Only `NEXT_PUBLIC_SITE_URL` is public.
+Do not expose `DATABASE_URI`, `PAYLOAD_SECRET`, or `BLOB_READ_WRITE_TOKEN` to the browser. Only `NEXT_PUBLIC_SITE_URL` is public.
 
 ## Neon Setup
 
@@ -48,11 +57,12 @@ Do not expose `DATABASE_URI` or `PAYLOAD_SECRET` to the browser. Only `NEXT_PUBL
 
 1. Push the repository to GitHub.
 2. Import the GitHub repository in Vercel.
-3. Add the required environment variables in Vercel.
-4. Deploy once.
-5. Run migrations against Neon.
-6. Seed demo content if needed.
-7. Redeploy if the first static build used fallback content before database content existed.
+3. Connect a Vercel Blob store to the project.
+4. Copy existing media to Blob with the migration command above.
+5. Add the required environment variables in Vercel.
+6. Run migrations against Neon.
+7. Deploy once.
+8. Seed demo content only if needed.
 
 ## Run Migrations Against Neon
 
@@ -90,6 +100,10 @@ Output Directory: .next
 
 No `vercel.json` is required for the current setup.
 
+## Dependency Audit
+
+The production dependency audit on 2026-07-23 reports no critical or high severity vulnerabilities. Five moderate findings remain in the `@payloadcms/db-postgres` -> `drizzle-kit` -> `@esbuild-kit` -> `esbuild` migration-tooling chain. npm does not currently provide a compatible fix. Do not expose local development servers publicly, and review this chain when upgrading Payload.
+
 ## Production Checklist
 
 - `NEXT_PUBLIC_SITE_URL` is the final Vercel or custom domain.
@@ -101,4 +115,6 @@ No `vercel.json` is required for the current setup.
 - A first admin user is created through Payload.
 - Contact submissions are saved in Payload.
 - Project pages render CMS data.
-- Media upload storage is upgraded before relying on admin uploads for real production assets.
+- `BLOB_READ_WRITE_TOKEN` is configured only as a server-side environment variable.
+- Existing `public/media` files have been copied to Vercel Blob.
+- An image uploaded in `/admin` remains available after a redeploy.

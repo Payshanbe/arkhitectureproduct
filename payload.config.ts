@@ -2,6 +2,7 @@ import path from "node:path";
 import { fileURLToPath } from "node:url";
 
 import { postgresAdapter } from "@payloadcms/db-postgres";
+import { vercelBlobStorage } from "@payloadcms/storage-vercel-blob";
 import { buildConfig } from "payload";
 import sharp from "sharp";
 
@@ -11,7 +12,7 @@ import { Partners } from "./payload/collections/Partners.ts";
 import { ProjectCategories } from "./payload/collections/ProjectCategories.ts";
 import { Projects } from "./payload/collections/Projects.ts";
 import { Users } from "./payload/collections/Users.ts";
-import { getPayloadEnv } from "./payload/env.ts";
+import { getPayloadEnv, getVercelBlobToken } from "./payload/env.ts";
 import { ContactInfo } from "./payload/globals/ContactInfo.ts";
 import { ContactFormSettings } from "./payload/globals/ContactFormSettings.ts";
 import { ContactPage } from "./payload/globals/ContactPage.ts";
@@ -26,6 +27,7 @@ import { WorkPage } from "./payload/globals/WorkPage.ts";
 const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const payloadEnv = getPayloadEnv();
+const vercelBlobToken = getVercelBlobToken();
 
 export default buildConfig({
   admin: {
@@ -71,4 +73,14 @@ export default buildConfig({
   graphQL: {
     schemaOutputFile: path.resolve(dirname, "types/payload-schema.graphql"),
   },
+  plugins: [
+    vercelBlobStorage({
+      addRandomSuffix: false,
+      clientUploads: true,
+      collections: {
+        media: true,
+      },
+      token: vercelBlobToken,
+    }),
+  ],
 });

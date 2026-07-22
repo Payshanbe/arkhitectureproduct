@@ -59,3 +59,23 @@ export function getPayloadEnv(): PayloadEnv {
     PAYLOAD_SECRET: payloadSecret,
   };
 }
+
+export function getVercelBlobToken(): string | undefined {
+  const token = process.env.BLOB_READ_WRITE_TOKEN?.trim();
+
+  if (!token) {
+    if (process.env.VERCEL_ENV === "production") {
+      throw new Error(
+        "Missing required environment variable: BLOB_READ_WRITE_TOKEN. Connect a Vercel Blob store before deploying to production.",
+      );
+    }
+
+    return undefined;
+  }
+
+  if (!/^vercel_blob_rw_[a-z\d]+_[a-z\d]+$/i.test(token)) {
+    throw new Error("BLOB_READ_WRITE_TOKEN has an invalid Vercel Blob token format.");
+  }
+
+  return token;
+}
