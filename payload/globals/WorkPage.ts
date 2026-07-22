@@ -1,6 +1,7 @@
 import type { GlobalConfig } from "payload";
 
 import { isAdminOrEditor } from "../access/admins.ts";
+import { localizeContentFields } from "../localization/localizeContentFields.ts";
 
 export const WorkPage: GlobalConfig = {
   slug: "work-page",
@@ -9,7 +10,7 @@ export const WorkPage: GlobalConfig = {
     read: () => true,
     update: isAdminOrEditor,
   },
-  fields: [
+  fields: localizeContentFields([
     {
       name: "hero",
       type: "group",
@@ -62,5 +63,5 @@ export const WorkPage: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
 };

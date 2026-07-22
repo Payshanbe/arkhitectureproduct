@@ -5,21 +5,21 @@ import { Section } from "@/components/layout/Section";
 import { EditorialStatement } from "@/components/typography/EditorialStatement";
 import { HomeStudioIntroMotion } from "@/features/home/HomeStudioIntroMotion";
 import type { HomePageContent } from "@/lib/cms/siteContent";
+import { localizePath, type SiteLocale } from "@/lib/i18n/config";
 
 interface HomeStudioIntroProps {
   content?: HomePageContent["studioIntro"];
+  locale: SiteLocale;
 }
 
-export function HomeStudioIntro({ content }: HomeStudioIntroProps) {
+export function HomeStudioIntro({ content, locale }: HomeStudioIntroProps) {
   return (
     <Section className="bg-background-secondary" spacing="small">
       <HomeStudioIntroMotion>
         <Container>
           <div className="grid items-start gap-8 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
             <div className="flex items-center gap-8 lg:col-span-3" data-studio-intro-reveal>
-              <p className="type-label text-foreground-muted">
-                {content?.label ?? "Our Approach"}
-              </p>
+              <p className="type-label text-foreground-muted">{content?.label ?? "Our Approach"}</p>
               <span className="hidden h-px flex-1 bg-border lg:block" aria-hidden="true" />
             </div>
 
@@ -40,15 +40,21 @@ export function HomeStudioIntro({ content }: HomeStudioIntroProps) {
               </div>
             </div>
 
-            <div className="lg:col-span-2 lg:col-start-11 lg:pt-[var(--space-20)]" data-studio-intro-reveal>
+            <div
+              className="lg:col-span-2 lg:col-start-11 lg:pt-[var(--space-20)]"
+              data-studio-intro-reveal
+            >
               <Link
                 className="group inline-flex items-center gap-10 text-[length:var(--font-size-ui)] uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] text-foreground transition-opacity duration-base ease-architectural-out hover:opacity-65 focus-visible:text-accent"
-                href={content?.linkHref ?? "/studio"}
+                href={localizePath(content?.linkHref ?? "/studio", locale)}
               >
                 <span className="bg-[linear-gradient(currentColor,currentColor)] bg-[length:100%_1px] bg-left-bottom bg-no-repeat pb-1 transition-[background-size] duration-base ease-architectural-out group-hover:bg-[length:0%_1px] group-focus-visible:bg-[length:0%_1px]">
                   {content?.linkLabel ?? "Learn More"}
                 </span>
-                <span className="transition-transform duration-base ease-architectural-out group-hover:translate-x-2" aria-hidden="true">
+                <span
+                  className="transition-transform duration-base ease-architectural-out group-hover:translate-x-2"
+                  aria-hidden="true"
+                >
                   &rarr;
                 </span>
               </Link>

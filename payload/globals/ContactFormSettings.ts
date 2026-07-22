@@ -1,6 +1,7 @@
 import type { GlobalConfig } from "payload";
 
 import { isAdminOrEditor } from "../access/admins.ts";
+import { localizeContentFields } from "../localization/localizeContentFields.ts";
 
 export const ContactFormSettings: GlobalConfig = {
   slug: "contact-form-settings",
@@ -9,7 +10,7 @@ export const ContactFormSettings: GlobalConfig = {
     read: () => true,
     update: isAdminOrEditor,
   },
-  fields: [
+  fields: localizeContentFields([
     {
       name: "labels",
       type: "group",
@@ -64,5 +65,5 @@ export const ContactFormSettings: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
 };

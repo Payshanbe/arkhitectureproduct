@@ -2,8 +2,10 @@ import configPromise from "@payload-config";
 import { getPayload } from "payload";
 
 import { normalizePayloadImageUrl } from "@/lib/cms/media";
+import { BRAND_NAME, resolveBrandName } from "@/lib/brand";
 import type { NavigationItem } from "@/lib/constants/navigation";
-import { primaryNavigation } from "@/lib/constants/navigation";
+import { getPrimaryNavigation } from "@/lib/constants/navigation";
+import { defaultLocale, type SiteLocale } from "@/lib/i18n/config";
 import type { Media } from "@/types/payload-types";
 
 type CmsGlobalSlug =
@@ -213,8 +215,7 @@ export interface SiteChromeContent {
 
 const fallbackHomePage: HomePageContent = {
   contact: {
-    body:
-      "For residences, interiors, and architectural collaborations, send a brief note and we will reply with a considered next step.",
+    body: "For residences, interiors, and architectural collaborations, send a brief note and we will reply with a considered next step.",
     label: "Let's Connect",
     statement: "Begin with a conversation about place, atmosphere, and what should endure.",
   },
@@ -239,8 +240,7 @@ const fallbackHomePage: HomePageContent = {
     label: "Selected Work",
   },
   studioIntro: {
-    body:
-      "The studio approaches each project as a careful composition of light, material, proportion, and daily ritual. The result is architecture that feels calm, precise, and quietly enduring.",
+    body: "The studio approaches each project as a careful composition of light, material, proportion, and daily ritual. The result is architecture that feels calm, precise, and quietly enduring.",
     label: "Our Approach",
     linkHref: "/studio",
     linkLabel: "Learn More",
@@ -265,11 +265,13 @@ const fallbackStudioPage: StudioPageContent = {
     },
     {
       label: "Disciplines",
-      value: "Architecture, interiors, furniture direction, landscape integration, and spatial strategy.",
+      value:
+        "Architecture, interiors, furniture direction, landscape integration, and spatial strategy.",
     },
     {
       label: "Collaborations",
-      value: "Independent makers, engineers, landscape designers, artists, fabricators, and photographers.",
+      value:
+        "Independent makers, engineers, landscape designers, artists, fabricators, and photographers.",
     },
   ],
   philosophy: {
@@ -309,8 +311,7 @@ const fallbackContactPage: ContactPageContent = {
     statement: "Begin with a conversation about place, atmosphere, and how a space should feel.",
   },
   inquiry: {
-    body:
-      "Write a short note about the place, the ambition, and the atmosphere you have in mind. We reply within a few working days.",
+    body: "Write a short note about the place, the ambition, and the atmosphere you have in mind. We reply within a few working days.",
     label: "Inquiry",
   },
 };
@@ -370,7 +371,8 @@ const fallbackWorkPage: WorkPageContent = {
 const fallbackProjectDetailSettings: ProjectDetailSettingsContent = {
   fallbacks: {
     category: "Project",
-    description: "A quiet architectural study shaped through proportion, atmosphere, and material restraint.",
+    description:
+      "A quiet architectural study shaped through proportion, atmosphere, and material restraint.",
     location: "Location forthcoming",
     year: "Undated",
   },
@@ -412,9 +414,9 @@ const fallbackContactDetails: ContactDetails = {
 };
 
 const fallbackSiteSettings: SiteSettingsContent = {
-  copyright: `© ${new Date().getFullYear()} Arkhitecture`,
+  copyright: `© ${new Date().getFullYear()} ${BRAND_NAME}`,
   footerDescription: "Architecture studio shaping calm spaces through light and material.",
-  siteName: "Arkhitecture",
+  siteName: BRAND_NAME,
   tagline: "Architecture Studio",
 };
 
@@ -442,17 +444,27 @@ function mediaImage(value: unknown) {
   };
 }
 
-async function getGlobal<T>(slug: CmsGlobalSlug): Promise<null | T> {
+async function getGlobal<T>(
+  slug: CmsGlobalSlug,
+  locale: SiteLocale = defaultLocale,
+): Promise<null | T> {
   try {
     const payload = await getPayload({ config: configPromise });
-    return (await payload.findGlobal({ slug, depth: 2 })) as T;
+    return (await payload.findGlobal({
+      slug,
+      depth: 2,
+      fallbackLocale: defaultLocale,
+      locale,
+    })) as T;
   } catch {
     return null;
   }
 }
 
-export async function getHomePageContent(): Promise<HomePageContent> {
-  const data = await getGlobal<Record<string, unknown>>("home-page");
+export async function getHomePageContent(
+  locale: SiteLocale = defaultLocale,
+): Promise<HomePageContent> {
+  const data = await getGlobal<Record<string, unknown>>("home-page", locale);
   const hero = (data?.hero ?? {}) as Record<string, unknown>;
   const heroImage = mediaImage(hero.image);
   const selectedProjects = (data?.selectedProjects ?? {}) as Record<string, unknown>;
@@ -497,26 +509,30 @@ export async function getHomePageContent(): Promise<HomePageContent> {
   };
 }
 
-export async function getStudioPageContent(): Promise<StudioPageContent> {
-  const data = await getGlobal<Record<string, unknown>>("studio-page");
+export async function getStudioPageContent(
+  locale: SiteLocale = defaultLocale,
+): Promise<StudioPageContent> {
+  const data = await getGlobal<Record<string, unknown>>("studio-page", locale);
   const hero = (data?.hero ?? {}) as Record<string, unknown>;
   const philosophy = (data?.philosophy ?? {}) as Record<string, unknown>;
   const process = (data?.process ?? {}) as Record<string, unknown>;
   const contactCta = (data?.contactCta ?? {}) as Record<string, unknown>;
 
-  const paragraphs = arrayItems(philosophy.paragraphs, []).map((item) =>
-    text((item as Record<string, unknown>).text, ""),
-  ).filter(Boolean);
-  const principles = arrayItems(data?.principles, []).map((item) =>
-    text((item as Record<string, unknown>).text, ""),
-  ).filter(Boolean);
-  const information = arrayItems(data?.information, []).map((item) => {
-    const row = item as Record<string, unknown>;
-    return {
-      label: text(row.label, ""),
-      value: text(row.value, ""),
-    };
-  }).filter((item) => item.label && item.value);
+  const paragraphs = arrayItems(philosophy.paragraphs, [])
+    .map((item) => text((item as Record<string, unknown>).text, ""))
+    .filter(Boolean);
+  const principles = arrayItems(data?.principles, [])
+    .map((item) => text((item as Record<string, unknown>).text, ""))
+    .filter(Boolean);
+  const information = arrayItems(data?.information, [])
+    .map((item) => {
+      const row = item as Record<string, unknown>;
+      return {
+        label: text(row.label, ""),
+        value: text(row.value, ""),
+      };
+    })
+    .filter((item) => item.label && item.value);
 
   return {
     contactCta: {
@@ -541,8 +557,10 @@ export async function getStudioPageContent(): Promise<StudioPageContent> {
   };
 }
 
-export async function getContactPageContent(): Promise<ContactPageContent> {
-  const data = await getGlobal<Record<string, unknown>>("contact-page");
+export async function getContactPageContent(
+  locale: SiteLocale = defaultLocale,
+): Promise<ContactPageContent> {
+  const data = await getGlobal<Record<string, unknown>>("contact-page", locale);
   const hero = (data?.hero ?? {}) as Record<string, unknown>;
   const inquiry = (data?.inquiry ?? {}) as Record<string, unknown>;
   const collaboration = (data?.collaboration ?? {}) as Record<string, unknown>;
@@ -568,8 +586,10 @@ export async function getContactPageContent(): Promise<ContactPageContent> {
   };
 }
 
-export async function getContactFormSettings(): Promise<ContactFormSettingsContent> {
-  const data = await getGlobal<Record<string, unknown>>("contact-form-settings");
+export async function getContactFormSettings(
+  locale: SiteLocale = defaultLocale,
+): Promise<ContactFormSettingsContent> {
+  const data = await getGlobal<Record<string, unknown>>("contact-form-settings", locale);
   const labels = (data?.labels ?? {}) as Record<string, unknown>;
   const messages = (data?.messages ?? {}) as Record<string, unknown>;
   const placeholders = (data?.placeholders ?? {}) as Record<string, unknown>;
@@ -597,7 +617,10 @@ export async function getContactFormSettings(): Promise<ContactFormSettingsConte
     messages: {
       defaultNote: text(messages.defaultNote, fallbackContactFormSettings.messages.defaultNote),
       emailError: text(messages.emailError, fallbackContactFormSettings.messages.emailError),
-      requiredError: text(messages.requiredError, fallbackContactFormSettings.messages.requiredError),
+      requiredError: text(
+        messages.requiredError,
+        fallbackContactFormSettings.messages.requiredError,
+      ),
       success: text(messages.success, fallbackContactFormSettings.messages.success),
     },
     placeholders: {
@@ -606,8 +629,10 @@ export async function getContactFormSettings(): Promise<ContactFormSettingsConte
   };
 }
 
-export async function getWorkPageContent(): Promise<WorkPageContent> {
-  const data = await getGlobal<Record<string, unknown>>("work-page");
+export async function getWorkPageContent(
+  locale: SiteLocale = defaultLocale,
+): Promise<WorkPageContent> {
+  const data = await getGlobal<Record<string, unknown>>("work-page", locale);
   const hero = (data?.hero ?? {}) as Record<string, unknown>;
   const archive = (data?.archive ?? {}) as Record<string, unknown>;
   const fallbacks = (data?.fallbacks ?? {}) as Record<string, unknown>;
@@ -647,8 +672,10 @@ export async function getWorkPageContent(): Promise<WorkPageContent> {
   };
 }
 
-export async function getProjectDetailSettings(): Promise<ProjectDetailSettingsContent> {
-  const data = await getGlobal<Record<string, unknown>>("project-detail-settings");
+export async function getProjectDetailSettings(
+  locale: SiteLocale = defaultLocale,
+): Promise<ProjectDetailSettingsContent> {
+  const data = await getGlobal<Record<string, unknown>>("project-detail-settings", locale);
   const labels = (data?.labels ?? {}) as Record<string, unknown>;
   const fallbacks = (data?.fallbacks ?? {}) as Record<string, unknown>;
   const serviceLabels = (data?.serviceLabels ?? {}) as Record<string, unknown>;
@@ -683,7 +710,10 @@ export async function getProjectDetailSettings(): Promise<ProjectDetailSettingsC
         serviceLabels.interiorDesign,
         fallbackProjectDetailSettings.serviceLabels.interiorDesign,
       ),
-      landscape: text(serviceLabels.landscape, fallbackProjectDetailSettings.serviceLabels.landscape),
+      landscape: text(
+        serviceLabels.landscape,
+        fallbackProjectDetailSettings.serviceLabels.landscape,
+      ),
       masterPlanning: text(
         serviceLabels.masterPlanning,
         fallbackProjectDetailSettings.serviceLabels.masterPlanning,
@@ -701,11 +731,13 @@ export async function getProjectDetailSettings(): Promise<ProjectDetailSettingsC
   };
 }
 
-export async function getSiteChromeContent(): Promise<SiteChromeContent> {
+export async function getSiteChromeContent(
+  locale: SiteLocale = defaultLocale,
+): Promise<SiteChromeContent> {
   const [settingsData, contactData, navigationData] = await Promise.all([
-    getGlobal<Record<string, unknown>>("site-settings"),
-    getGlobal<Record<string, unknown>>("contact-info"),
-    getGlobal<Record<string, unknown>>("navigation"),
+    getGlobal<Record<string, unknown>>("site-settings", locale),
+    getGlobal<Record<string, unknown>>("contact-info", locale),
+    getGlobal<Record<string, unknown>>("navigation", locale),
   ]);
 
   const navigationItems = arrayItems(navigationData?.items, [])
@@ -759,11 +791,14 @@ export async function getSiteChromeContent(): Promise<SiteChromeContent> {
             ? networkLinks
             : fallbackContactDetails.socialLinks,
     },
-    navigationItems: navigationItems.length > 0 ? navigationItems : primaryNavigation,
+    navigationItems: navigationItems.length > 0 ? navigationItems : getPrimaryNavigation(locale),
     settings: {
       copyright: text(settingsData?.copyright, fallbackSiteSettings.copyright),
-      footerDescription: text(settingsData?.footerDescription, fallbackSiteSettings.footerDescription),
-      siteName: text(settingsData?.siteName, fallbackSiteSettings.siteName),
+      footerDescription: text(
+        settingsData?.footerDescription,
+        fallbackSiteSettings.footerDescription,
+      ),
+      siteName: resolveBrandName(text(settingsData?.siteName, fallbackSiteSettings.siteName)),
       tagline: text(settingsData?.tagline, fallbackSiteSettings.tagline),
     },
   };

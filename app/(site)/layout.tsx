@@ -1,13 +1,10 @@
 import { Cormorant_Garamond, Inter } from "next/font/google";
+import { headers } from "next/headers";
 import type { Viewport } from "next";
 
-import { Footer } from "@/components/layout/Footer";
-import { Header } from "@/components/layout/Header";
 import { RouteScrollRestoration } from "@/components/navigation/RouteScrollRestoration";
-import { StructuredData } from "@/components/seo/StructuredData";
-import { getSiteChromeContent } from "@/lib/cms/siteContent";
+import { getLanguageTag, normalizeLocale } from "@/lib/i18n/config";
 import { globalMetadata } from "@/lib/seo/metadata";
-import { organizationJsonLd, websiteJsonLd } from "@/lib/seo/structuredData";
 import { MotionProvider } from "@/providers/MotionProvider";
 
 import "../globals.css";
@@ -36,27 +33,15 @@ interface SiteLayoutProps {
 }
 
 export default async function SiteLayout({ children }: SiteLayoutProps) {
-  const siteContent = await getSiteChromeContent();
+  const requestHeaders = await headers();
+  const locale = normalizeLocale(requestHeaders.get("x-site-locale"));
 
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable}`}>
+    <html lang={getLanguageTag(locale)} className={`${display.variable} ${sans.variable}`}>
       <body>
-        <a
-          className="fixed left-[var(--container-padding)] top-4 z-overlay -translate-y-24 bg-background px-4 py-3 type-label text-foreground shadow-sm transition-transform duration-base ease-architectural-out focus-visible:translate-y-0"
-          href="#main-content"
-        >
-          Skip to content
-        </a>
-        <StructuredData data={[organizationJsonLd(), websiteJsonLd()]} />
         <MotionProvider>
           <RouteScrollRestoration />
-          <Header
-            menuDescription={siteContent.settings.footerDescription}
-            navigationItems={siteContent.navigationItems}
-            siteName={siteContent.settings.siteName}
-          />
           {children}
-          <Footer />
         </MotionProvider>
       </body>
     </html>

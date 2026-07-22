@@ -6,6 +6,7 @@ import { getPayload } from "payload";
 import { WorkArchiveMotion } from "@/features/work/WorkArchiveMotion";
 import { normalizePayloadImageUrl } from "@/lib/cms/media";
 import { getWorkPageContent, type WorkPageContent } from "@/lib/cms/siteContent";
+import { defaultLocale, localizePath, type SiteLocale } from "@/lib/i18n/config";
 import type { Media, Project } from "@/types/payload-types";
 
 interface WorkProject {
@@ -39,14 +40,18 @@ function normalizeDescription(project: Project, content: WorkPageContent) {
   );
 }
 
-function normalizeProject(project: Project, content: WorkPageContent): WorkProject {
+function normalizeProject(
+  project: Project,
+  content: WorkPageContent,
+  locale: SiteLocale,
+): WorkProject {
   const coverImage = isMedia(project.coverImage) ? project.coverImage : null;
 
   return {
     coverAlt: coverImage?.alt ?? `${project.title} architectural project image.`,
     coverSrc: normalizePayloadImageUrl(coverImage?.sizes?.large?.url ?? coverImage?.url, ""),
     description: normalizeDescription(project, content),
-    href: `/work/${project.slug}`,
+    href: localizePath(`/work/${project.slug}`, locale),
     id: String(project.id),
     location: normalizeLocation(project, content),
     title: project.title,
@@ -54,13 +59,18 @@ function normalizeProject(project: Project, content: WorkPageContent): WorkProje
   };
 }
 
-async function getArchiveProjects(content: WorkPageContent): Promise<WorkProject[]> {
+async function getArchiveProjects(
+  content: WorkPageContent,
+  locale: SiteLocale,
+): Promise<WorkProject[]> {
   try {
     const payload = await getPayload({ config: configPromise });
     const projects = await payload.find({
       collection: "projects",
       depth: 2,
+      fallbackLocale: defaultLocale,
       limit: 100,
+      locale,
       sort: "-year",
       where: {
         published: {
@@ -69,7 +79,7 @@ async function getArchiveProjects(content: WorkPageContent): Promise<WorkProject
       },
     });
 
-    return projects.docs.map((project) => normalizeProject(project, content));
+    return projects.docs.map((project) => normalizeProject(project, content, locale));
   } catch {
     return [];
   }
@@ -133,9 +143,13 @@ function ProjectPlateLink({
   );
 }
 
-export async function WorkArchive() {
-  const content = await getWorkPageContent();
-  const projects = await getArchiveProjects(content);
+interface WorkArchiveProps {
+  locale: SiteLocale;
+}
+
+export async function WorkArchive({ locale }: WorkArchiveProps) {
+  const content = await getWorkPageContent(locale);
+  const projects = await getArchiveProjects(content, locale);
   const projectCount = String(projects.length).padStart(2, "0");
   const years = projects
     .map((project) => Number(project.year))
@@ -177,7 +191,9 @@ export async function WorkArchive() {
 
                 return (
                   <article
-                    className={isTemplateB ? "work-project work-project--b" : "work-project work-project--a"}
+                    className={
+                      isTemplateB ? "work-project work-project--b" : "work-project work-project--a"
+                    }
                     data-work-reveal
                     key={project.id}
                   >
@@ -237,7 +253,7 @@ export async function WorkArchive() {
                       coverAlt: "Project archive placeholder.",
                       coverSrc: null,
                       description: "",
-                      href: "/work",
+                      href: localizePath("/work", locale),
                       id: "empty",
                       location: content.archive.emptyLocationLabel,
                       title: content.archive.emptyTitle,

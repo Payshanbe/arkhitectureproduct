@@ -4,9 +4,13 @@ import { useEffect, useRef } from "react";
 
 import { initGSAP } from "@/animations/gsap";
 import { menuReveal } from "@/animations/menuReveal";
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { Navigation } from "@/components/navigation/Navigation";
+import { LanguageSwitcher } from "@/components/navigation/LanguageSwitcher";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import { BRAND_NAME } from "@/lib/brand";
 import type { NavigationItem } from "@/lib/constants/navigation";
+import type { SiteLocale } from "@/lib/i18n/config";
 import { cn } from "@/utils/cn";
 
 interface FullscreenMenuProps {
@@ -14,6 +18,7 @@ interface FullscreenMenuProps {
   id: string;
   isOpen: boolean;
   items?: NavigationItem[];
+  locale: SiteLocale;
   onClose: () => void;
   siteName?: string;
 }
@@ -31,8 +36,9 @@ export function FullscreenMenu({
   id,
   isOpen,
   items,
+  locale,
   onClose,
-  siteName = "Arkhitecture",
+  siteName = BRAND_NAME,
 }: FullscreenMenuProps) {
   const previousActiveElement = useRef<Element | null>(null);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -91,9 +97,12 @@ export function FullscreenMenu({
     const focusableElements = getFocusableElements(menu);
     const firstFocusable = focusableElements[0];
 
-    window.setTimeout(() => {
-      firstFocusable?.focus();
-    }, prefersReducedMotion ? 0 : 120);
+    window.setTimeout(
+      () => {
+        firstFocusable?.focus();
+      },
+      prefersReducedMotion ? 0 : 120,
+    );
 
     const onKeyDown = (event: KeyboardEvent) => {
       if (event.key === "Escape") {
@@ -159,10 +168,12 @@ export function FullscreenMenu({
         role="dialog"
       >
         <div className="flex min-h-[calc(100svh-48px)] flex-col justify-between gap-16">
-          <div className="nav-menu-topbar flex items-center justify-between rounded-[4px] px-4 py-3 sm:px-7 sm:py-3.5">
-            <p className="type-label text-foreground-muted">
-              Navigation
-            </p>
+          <div className="nav-menu-topbar flex items-center justify-between gap-6 rounded-[4px] px-4 py-3 sm:px-7 sm:py-3.5">
+            <LanguageSwitcher
+              className="type-label text-foreground"
+              locale={locale}
+              onNavigate={onClose}
+            />
             <button
               className="nav-link nav-text min-h-11 uppercase leading-[var(--line-height-ui)] transition-colors duration-base ease-architectural-out"
               type="button"
@@ -176,6 +187,7 @@ export function FullscreenMenu({
             <Navigation
               items={items}
               label="Fullscreen navigation"
+              locale={locale}
               onNavigate={onClose}
               variant="menu"
             />
@@ -185,12 +197,12 @@ export function FullscreenMenu({
             className="grid gap-6 border-t border-border pt-6 text-[length:var(--font-size-ui)] leading-[var(--line-height-body)] text-foreground-secondary sm:grid-cols-2"
             ref={supportingRef}
           >
-            <p className="max-w-[var(--text-width)]">
-              {description}
-            </p>
-            <p className="text-left uppercase leading-[var(--line-height-ui)] tracking-[var(--letter-spacing-ui)] text-foreground-muted sm:text-right">
-              {siteName}
-            </p>
+            <p className="max-w-[var(--text-width)]">{description}</p>
+            <BrandLogo
+              className="text-foreground-muted sm:justify-self-end"
+              name={siteName}
+              variant="footer"
+            />
           </div>
         </div>
       </div>

@@ -6,6 +6,7 @@ import { EditorialStatement } from "@/components/typography/EditorialStatement";
 import { SignatureExperienceSection } from "@/features/signature-experience/components/SignatureExperienceSection";
 import { StudioPageMotion } from "@/features/studio/StudioPageMotion";
 import type { ContactDetails, StudioPageContent } from "@/lib/cms/siteContent";
+import type { SiteLocale } from "@/lib/i18n/config";
 
 const philosophyText = [
   "The studio works from the belief that architecture should become quieter as it becomes more precise. Each project begins with listening: to the site, to the pace of daily life, to climate, light, material, and the rituals that will eventually occupy the space.",
@@ -28,20 +29,23 @@ const studioInfo = [
   },
   {
     label: "Disciplines",
-    value: "Architecture, interiors, furniture direction, landscape integration, and spatial strategy.",
+    value:
+      "Architecture, interiors, furniture direction, landscape integration, and spatial strategy.",
   },
   {
     label: "Collaborations",
-    value: "Independent makers, engineers, landscape designers, artists, fabricators, and photographers.",
+    value:
+      "Independent makers, engineers, landscape designers, artists, fabricators, and photographers.",
   },
 ];
 
 interface StudioPageProps {
   contact?: ContactDetails;
   content?: StudioPageContent;
+  locale: SiteLocale;
 }
 
-export function StudioPage({ contact, content }: StudioPageProps) {
+export function StudioPage({ contact, content, locale }: StudioPageProps) {
   const philosophy = content?.philosophy.paragraphs ?? philosophyText;
   const principleItems = content?.principles ?? principles;
   const information = content?.information ?? studioInfo;
@@ -55,10 +59,7 @@ export function StudioPage({ contact, content }: StudioPageProps) {
       >
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p
-              className="type-label text-foreground-muted lg:col-span-2"
-              data-studio-reveal
-            >
+            <p className="type-label text-foreground-muted lg:col-span-2" data-studio-reveal>
               {content?.hero.label ?? "Studio"}
             </p>
 
@@ -77,10 +78,7 @@ export function StudioPage({ contact, content }: StudioPageProps) {
       <Section className="bg-background-secondary" spacing="large">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p
-              className="type-label text-foreground-muted lg:col-span-2"
-              data-studio-reveal
-            >
+            <p className="type-label text-foreground-muted lg:col-span-2" data-studio-reveal>
               {content?.philosophy.label ?? "Philosophy"}
             </p>
 
@@ -107,10 +105,7 @@ export function StudioPage({ contact, content }: StudioPageProps) {
       <Section className="bg-background-secondary pb-0" spacing="large">
         <Container>
           <div className="grid gap-10 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p
-              className="type-label text-foreground-muted lg:col-span-2"
-              data-studio-reveal
-            >
+            <p className="type-label text-foreground-muted lg:col-span-2" data-studio-reveal>
               {content?.process.label ?? "The Process"}
             </p>
 
@@ -125,15 +120,12 @@ export function StudioPage({ contact, content }: StudioPageProps) {
         </Container>
       </Section>
 
-      <SignatureExperienceSection />
+      <SignatureExperienceSection locale={locale} />
 
       <Section className="bg-background" spacing="large">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p
-              className="type-label text-foreground-muted lg:col-span-2"
-              data-studio-reveal
-            >
+            <p className="type-label text-foreground-muted lg:col-span-2" data-studio-reveal>
               Principles
             </p>
 
@@ -157,19 +149,14 @@ export function StudioPage({ contact, content }: StudioPageProps) {
       <Section className="bg-background" spacing="large">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p
-              className="type-label text-foreground-muted lg:col-span-2"
-              data-studio-reveal
-            >
+            <p className="type-label text-foreground-muted lg:col-span-2" data-studio-reveal>
               Information
             </p>
 
             <dl className="grid gap-8 md:grid-cols-3 lg:col-span-9 lg:col-start-4 lg:gap-[var(--grid-gap)]">
               {information.map((item) => (
                 <div className="border-t border-border pt-5" data-studio-reveal key={item.label}>
-                  <dt className="type-label text-foreground-muted">
-                    {item.label}
-                  </dt>
+                  <dt className="type-label text-foreground-muted">{item.label}</dt>
                   <dd className="mt-5 text-pretty text-[length:var(--font-size-body)] leading-[var(--line-height-body)] text-foreground-secondary">
                     {item.value}
                   </dd>

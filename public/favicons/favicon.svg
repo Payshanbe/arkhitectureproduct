@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Arkhitecture">
-  <rect width="64" height="64" fill="#f4f1eb" />
-  <path d="M16 48V16h32v32h-6V22H22v26h-6Z" fill="#1f1d1a" />
-  <path d="M28 48V30h8v18h-8Z" fill="#8a8174" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="PRO DESIGN">
+  <rect width="64" height="64" rx="6" fill="#1f1d1a" />
+  <g fill="none" stroke="#f4f1eb" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M8 34h48M8 42h48" opacity=".38" />
+    <path d="M15 48V31l15-12 12 12v17M30 48V31l14-14 14 14v17" stroke-width="2" />
+    <path d="M15 31h43M15 48h43M15 48l15-10h28M30 48l14-10" opacity=".82" stroke-width="2" />
+  </g>
 </svg>

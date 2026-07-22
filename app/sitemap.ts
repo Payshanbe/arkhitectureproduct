@@ -3,6 +3,7 @@ import configPromise from "@payload-config";
 import { getPayload } from "payload";
 
 import { absoluteUrl } from "@/lib/seo/metadata";
+import { localizePath, siteLocales } from "@/lib/i18n/config";
 import type { Project } from "@/types/payload-types";
 
 export const dynamic = "force-dynamic";
@@ -34,19 +35,37 @@ async function getPublishedProjects(): Promise<Project[]> {
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const projects = await getPublishedProjects();
   const now = new Date();
+  const localizedStaticRoutes = siteLocales.flatMap((locale) =>
+    staticRoutes.map((route) => ({ locale, route })),
+  );
+  const localizedProjects = siteLocales.flatMap((locale) =>
+    projects.map((project) => ({ locale, project })),
+  );
 
   return [
-    ...staticRoutes.map((route) => ({
+    ...localizedStaticRoutes.map(({ locale, route }) => ({
+      alternates: {
+        languages: {
+          ru: absoluteUrl(localizePath(route || "/", "ru")),
+          tg: absoluteUrl(localizePath(route || "/", "tj")),
+        },
+      },
       changeFrequency: "monthly" as const,
       lastModified: now,
       priority: route === "" ? 1 : 0.8,
-      url: absoluteUrl(route || "/"),
+      url: absoluteUrl(localizePath(route || "/", locale)),
     })),
-    ...projects.map((project) => ({
+    ...localizedProjects.map(({ locale, project }) => ({
+      alternates: {
+        languages: {
+          ru: absoluteUrl(localizePath(`/work/${project.slug}`, "ru")),
+          tg: absoluteUrl(localizePath(`/work/${project.slug}`, "tj")),
+        },
+      },
       changeFrequency: "monthly" as const,
       lastModified: project.updatedAt ? new Date(project.updatedAt) : now,
       priority: 0.7,
-      url: absoluteUrl(`/work/${project.slug}`),
+      url: absoluteUrl(localizePath(`/work/${project.slug}`, locale)),
     })),
   ];
 }

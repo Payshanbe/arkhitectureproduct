@@ -1,6 +1,7 @@
 import type { GlobalConfig } from "payload";
 
 import { isAdminOrEditor } from "../access/admins.ts";
+import { localizeContentFields } from "../localization/localizeContentFields.ts";
 
 export const SeoDefaults: GlobalConfig = {
   slug: "seo-defaults",
@@ -8,7 +9,7 @@ export const SeoDefaults: GlobalConfig = {
     read: () => true,
     update: isAdminOrEditor,
   },
-  fields: [
+  fields: localizeContentFields([
     {
       name: "defaultTitle",
       type: "text",
@@ -29,5 +30,5 @@ export const SeoDefaults: GlobalConfig = {
       type: "upload",
       relationTo: "media",
     },
-  ],
+  ]),
 };

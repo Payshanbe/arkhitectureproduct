@@ -5,6 +5,7 @@ import { publishedOnly } from "../access/publishedOnly.ts";
 import { galleryField } from "../fields/imageFields.ts";
 import { seoFields } from "../fields/seoFields.ts";
 import { slugField } from "../fields/slugField.ts";
+import { localizeContentFields } from "../localization/localizeContentFields.ts";
 
 export const Projects: CollectionConfig = {
   slug: "projects",
@@ -22,7 +23,7 @@ export const Projects: CollectionConfig = {
   versions: {
     drafts: true,
   },
-  fields: [
+  fields: localizeContentFields([
     {
       name: "title",
       type: "text",
@@ -216,5 +217,5 @@ export const Projects: CollectionConfig = {
       },
     },
     seoFields,
-  ],
+  ]),
 };

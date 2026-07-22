@@ -7,6 +7,7 @@ import sharp from "sharp";
 
 import { Media } from "./payload/collections/Media.ts";
 import { ContactSubmissions } from "./payload/collections/ContactSubmissions.ts";
+import { Partners } from "./payload/collections/Partners.ts";
 import { ProjectCategories } from "./payload/collections/ProjectCategories.ts";
 import { Projects } from "./payload/collections/Projects.ts";
 import { Users } from "./payload/collections/Users.ts";
@@ -33,7 +34,7 @@ export default buildConfig({
       baseDir: dirname,
     },
   },
-  collections: [Users, Media, ProjectCategories, Projects, ContactSubmissions],
+  collections: [Users, Media, ProjectCategories, Projects, Partners, ContactSubmissions],
   globals: [
     SiteSettings,
     ContactInfo,
@@ -46,6 +47,14 @@ export default buildConfig({
     ProjectDetailSettings,
     ContactFormSettings,
   ],
+  localization: {
+    defaultLocale: "ru",
+    fallback: true,
+    locales: [
+      { code: "ru", label: "Русский" },
+      { code: "tj", label: "Тоҷикӣ" },
+    ],
+  },
   db: postgresAdapter({
     migrationDir: path.resolve(dirname, "payload/migrations"),
     pool: {

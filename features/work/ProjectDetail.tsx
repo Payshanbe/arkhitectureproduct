@@ -9,15 +9,14 @@ import { Section } from "@/components/layout/Section";
 import { StructuredData } from "@/components/seo/StructuredData";
 import { ProjectDetailMotion } from "@/features/work/ProjectDetailMotion";
 import { normalizePayloadImageUrl } from "@/lib/cms/media";
-import {
-  getProjectDetailSettings,
-  type ProjectDetailSettingsContent,
-} from "@/lib/cms/siteContent";
+import { getProjectDetailSettings, type ProjectDetailSettingsContent } from "@/lib/cms/siteContent";
+import { defaultLocale, localizePath, type SiteLocale } from "@/lib/i18n/config";
 import { creativeWorkJsonLd } from "@/lib/seo/structuredData";
 import type { Media, Project, ProjectCategory } from "@/types/payload-types";
 import { cn } from "@/utils/cn";
 
 interface ProjectDetailProps {
+  locale: SiteLocale;
   slug: string;
 }
 
@@ -129,7 +128,11 @@ function splitEditorialText(text: string) {
   );
 }
 
-function normalizeGalleryImage(item: ProjectImageInput, index: number, title: string): ProjectImage {
+function normalizeGalleryImage(
+  item: ProjectImageInput,
+  index: number,
+  title: string,
+): ProjectImage {
   const image = isGalleryMedia(item.image) ? item.image : null;
 
   return {
@@ -191,12 +194,14 @@ function normalizeProject(
   };
 }
 
-async function getProjectBySlug(slug: string): Promise<Project | null> {
+async function getProjectBySlug(slug: string, locale: SiteLocale): Promise<Project | null> {
   const payload = await getPayload({ config: configPromise });
   const projects = await payload.find({
     collection: "projects",
     depth: 2,
+    fallbackLocale: defaultLocale,
     limit: 1,
+    locale,
     where: {
       and: [
         {
@@ -216,12 +221,17 @@ async function getProjectBySlug(slug: string): Promise<Project | null> {
   return projects.docs[0] ?? null;
 }
 
-async function getNextProject(currentSlug: string): Promise<NextProject | null> {
+async function getNextProject(
+  currentSlug: string,
+  locale: SiteLocale,
+): Promise<NextProject | null> {
   const payload = await getPayload({ config: configPromise });
   const projects = await payload.find({
     collection: "projects",
     depth: 0,
+    fallbackLocale: defaultLocale,
     limit: 100,
+    locale,
     sort: "order",
     where: {
       published: {
@@ -243,7 +253,7 @@ async function getNextProject(currentSlug: string): Promise<NextProject | null> 
   }
 
   return {
-    href: `/work/${nextProject.slug}`,
+    href: localizePath(`/work/${nextProject.slug}`, locale),
     title: nextProject.title,
   };
 }
@@ -255,9 +265,7 @@ function DetailItem({ label, value }: { label: string; value?: string | string[]
 
   return (
     <div className="border-t border-border pt-4">
-      <dt className="type-label text-foreground-muted">
-        {label}
-      </dt>
+      <dt className="type-label text-foreground-muted">{label}</dt>
       <dd className="mt-3 text-pretty text-[length:var(--font-size-body)] leading-[var(--line-height-body)] text-foreground">
         {Array.isArray(value) ? value.join(", ") : value}
       </dd>
@@ -272,10 +280,11 @@ function ProjectHero({ project }: { project: NormalizedProject }) {
       spacing="none"
     >
       <Container>
-        <div className="grid gap-8 lg:grid-cols-12 lg:gap-[var(--grid-gap)]" data-project-detail-reveal>
-          <p className="type-label text-foreground-muted lg:col-span-2">
-            {project.category}
-          </p>
+        <div
+          className="grid gap-8 lg:grid-cols-12 lg:gap-[var(--grid-gap)]"
+          data-project-detail-reveal
+        >
+          <p className="type-label text-foreground-muted lg:col-span-2">{project.category}</p>
 
           <h1 className="max-w-[900px] type-display text-foreground lg:col-span-9 lg:col-start-4">
             {project.title}
@@ -325,7 +334,8 @@ function ProjectGallery({ images }: { images: ProjectImage[] }) {
               {
                 frame: "relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-[16/10]",
                 image: "lg:col-span-12",
-                sizes: "(min-width: 1824px) 1680px, (min-width: 1024px) calc(100vw - 144px), calc(100vw - 40px)",
+                sizes:
+                  "(min-width: 1824px) 1680px, (min-width: 1024px) calc(100vw - 144px), calc(100vw - 40px)",
               },
               {
                 frame: "relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-[3/2]",
@@ -373,10 +383,7 @@ function ProjectGallery({ images }: { images: ProjectImage[] }) {
 
                 {image.caption ? (
                   <figcaption
-                    className={cn(
-                      "max-w-[360px] type-caption text-foreground-muted",
-                      imageClass,
-                    )}
+                    className={cn("max-w-[360px] type-caption text-foreground-muted", imageClass)}
                   >
                     {image.caption}
                   </figcaption>
@@ -390,10 +397,10 @@ function ProjectGallery({ images }: { images: ProjectImage[] }) {
   );
 }
 
-export async function ProjectDetail({ slug }: ProjectDetailProps) {
+export async function ProjectDetail({ locale, slug }: ProjectDetailProps) {
   const [projectDocument, settings] = await Promise.all([
-    getProjectBySlug(slug),
-    getProjectDetailSettings(),
+    getProjectBySlug(slug, locale),
+    getProjectDetailSettings(locale),
   ]);
 
   if (!projectDocument) {
@@ -401,7 +408,7 @@ export async function ProjectDetail({ slug }: ProjectDetailProps) {
   }
 
   const project = normalizeProject(projectDocument, settings);
-  const nextProject = await getNextProject(project.slug);
+  const nextProject = await getNextProject(project.slug, locale);
   const statementParagraphs = splitEditorialText(project.description);
   const projectStructuredData = creativeWorkJsonLd({
     category: project.category,
@@ -410,7 +417,7 @@ export async function ProjectDetail({ slug }: ProjectDetailProps) {
     location: project.location,
     name: project.title,
     services: project.services,
-    url: `/work/${project.slug}`,
+    url: localizePath(`/work/${project.slug}`, locale),
     year: project.year === "Undated" ? undefined : project.year,
   });
 
@@ -429,9 +436,7 @@ export async function ProjectDetail({ slug }: ProjectDetailProps) {
               className="self-start lg:sticky lg:top-32 lg:col-span-3"
               data-project-detail-reveal
             >
-              <p className="type-label text-foreground-muted">
-                {settings.labels.statement}
-              </p>
+              <p className="type-label text-foreground-muted">{settings.labels.statement}</p>
 
               <dl className="mt-10 grid gap-6">
                 <DetailItem label={settings.labels.services} value={project.services} />

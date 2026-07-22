@@ -1,6 +1,7 @@
 import type { GlobalConfig } from "payload";
 
 import { isAdminOrEditor } from "../access/admins.ts";
+import { localizeContentFields } from "../localization/localizeContentFields.ts";
 
 export const Navigation: GlobalConfig = {
   slug: "navigation",
@@ -8,7 +9,7 @@ export const Navigation: GlobalConfig = {
     read: () => true,
     update: isAdminOrEditor,
   },
-  fields: [
+  fields: localizeContentFields([
     {
       name: "items",
       type: "array",
@@ -35,5 +36,5 @@ export const Navigation: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
 };

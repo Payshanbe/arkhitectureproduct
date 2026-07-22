@@ -5,20 +5,26 @@ import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useId, useRef, useState } from "react";
 
 import { FullscreenMenu } from "@/components/navigation/FullscreenMenu";
+import { BrandLogo } from "@/components/brand/BrandLogo";
+import { LanguageSwitcher } from "@/components/navigation/LanguageSwitcher";
 import { MenuButton } from "@/components/navigation/MenuButton";
 import { Navigation } from "@/components/navigation/Navigation";
 import type { NavigationItem } from "@/lib/constants/navigation";
+import { BRAND_NAME } from "@/lib/brand";
+import { localizePath, type SiteLocale } from "@/lib/i18n/config";
 
 interface HeaderProps {
   menuDescription?: string;
   navigationItems?: NavigationItem[];
+  locale: SiteLocale;
   siteName?: string;
 }
 
 export function Header({
   menuDescription,
   navigationItems,
-  siteName = "Arkhitecture",
+  locale,
+  siteName = BRAND_NAME,
 }: HeaderProps) {
   const menuId = useId();
   const pathname = usePathname();
@@ -104,18 +110,18 @@ export function Header({
           data-nav-theme={navTheme}
         >
           <Link
-            className="nav-link nav-text nav-wordmark uppercase leading-[var(--line-height-ui)] transition-colors duration-base ease-architectural-out"
-            href="/"
+            aria-label={`${siteName} — Home`}
+            className="nav-link inline-flex transition-colors duration-base ease-architectural-out"
+            href={localizePath("/", locale)}
             onClick={closeMenu}
           >
-            {siteName}
+            <BrandLogo name={siteName} />
           </Link>
 
-          <Navigation
-            className="hidden lg:block"
-            itemClassName="nav-link nav-text"
-            items={navigationItems}
-          />
+          <div className="hidden items-center gap-9 lg:flex">
+            <Navigation itemClassName="nav-link nav-text" items={navigationItems} locale={locale} />
+            <LanguageSwitcher className="nav-link nav-text type-label" locale={locale} />
+          </div>
 
           <MenuButton
             className="nav-link nav-text lg:hidden"
@@ -133,6 +139,7 @@ export function Header({
         id={menuId}
         isOpen={isMenuOpen}
         items={navigationItems}
+        locale={locale}
         onClose={closeMenu}
         siteName={siteName}
       />

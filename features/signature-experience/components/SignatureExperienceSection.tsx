@@ -6,16 +6,21 @@ import { gsap, initGSAP, ScrollTrigger, useGSAP } from "@/animations/gsap";
 import { Container } from "@/components/layout/Container";
 import { SignatureDrawing } from "@/features/signature-experience/components/SignatureDrawing";
 import { signatureAnimationConfig } from "@/features/signature-experience/signature-animation-config";
-import { signatureConfig } from "@/features/signature-experience/signature-config";
-import type { LayerId } from "@/features/signature-experience/types";
+import {
+  getSignatureScenes,
+  signatureConfig,
+} from "@/features/signature-experience/signature-config";
+import type { LayerId, Scene } from "@/features/signature-experience/types";
 import { getLayerStatesForScene } from "@/features/signature-experience/utils/layers";
 import { createSceneEngineState } from "@/features/signature-experience/utils/scene-engine";
 import { useReducedMotion } from "@/hooks/useReducedMotion";
+import type { SiteLocale } from "@/lib/i18n/config";
+import { defaultLocale } from "@/lib/i18n/config";
 import { cn } from "@/utils/cn";
 
-const { layers, scenes, timing } = signatureConfig;
+const { layers, timing } = signatureConfig;
 
-function getTimelinePosition(sceneIndex: number) {
+function getTimelinePosition(sceneIndex: number, scenes: Scene[]) {
   const previousDuration = scenes
     .slice(0, sceneIndex)
     .reduce((total, scene) => total + scene.durationVh, 0);
@@ -38,8 +43,15 @@ function prepareDrawPaths(root: HTMLElement) {
   });
 }
 
-function revealLayer(root: HTMLElement, layerId: LayerId, position: number, timeline: gsap.core.Timeline) {
-  const animation = signatureAnimationConfig.find((item) => item.enter.targetLayers.includes(layerId));
+function revealLayer(
+  root: HTMLElement,
+  layerId: LayerId,
+  position: number,
+  timeline: gsap.core.Timeline,
+) {
+  const animation = signatureAnimationConfig.find((item) =>
+    item.enter.targetLayers.includes(layerId),
+  );
   const layer = getLayerElement(root, layerId);
 
   if (!layer || !animation) {
@@ -74,10 +86,18 @@ function revealLayer(root: HTMLElement, layerId: LayerId, position: number, time
   }
 }
 
-export function SignatureExperienceSection() {
+interface SignatureExperienceSectionProps {
+  locale?: SiteLocale;
+}
+
+export function SignatureExperienceSection({
+  locale = defaultLocale,
+}: SignatureExperienceSectionProps) {
   const rootRef = useRef<HTMLDivElement>(null);
   const prefersReducedMotion = useReducedMotion();
   const [activeSceneIndex, setActiveSceneIndex] = useState(0);
+  const scenes = getSignatureScenes(locale);
+  const processLabel = locale === "tj" ? "Раванд" : "Процесс";
 
   useGSAP(
     () => {
@@ -149,11 +169,15 @@ export function SignatureExperienceSection() {
       });
 
       signatureAnimationConfig.forEach((animation, sceneIndex) => {
-        const position = getTimelinePosition(sceneIndex);
+        const position = getTimelinePosition(sceneIndex, scenes);
 
         if (sceneIndex > 0) {
           timeline
-            .to(copyPanels[sceneIndex - 1], { autoAlpha: 0, duration: 0.46, y: -10 }, position - 0.16)
+            .to(
+              copyPanels[sceneIndex - 1],
+              { autoAlpha: 0, duration: 0.46, y: -10 },
+              position - 0.16,
+            )
             .to(copyPanels[sceneIndex], { autoAlpha: 1, duration: 0.76, y: 0 }, position + 0.02);
         }
 
@@ -170,7 +194,7 @@ export function SignatureExperienceSection() {
       };
     },
     {
-      dependencies: [prefersReducedMotion],
+      dependencies: [locale, prefersReducedMotion],
       scope: rootRef,
     },
   );
@@ -189,9 +213,7 @@ export function SignatureExperienceSection() {
         <Container className="flex min-h-svh items-center py-[var(--section-spacing-medium)]">
           <div className="grid w-full items-center gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
             <div className="lg:col-span-4">
-              <p className="mb-6 type-label text-foreground-muted">
-                Process
-              </p>
+              <p className="mb-6 type-label text-foreground-muted">{processLabel}</p>
               <div className="relative min-h-[320px]">
                 {scenes.map((scene, index) => (
                   <article
@@ -200,9 +222,7 @@ export function SignatureExperienceSection() {
                     key={scene.id}
                     style={{ opacity: index === 0 ? 1 : 0 }}
                   >
-                    <p className="mb-5 type-label text-foreground-muted">
-                      {scene.index}
-                    </p>
+                    <p className="mb-5 type-label text-foreground-muted">{scene.index}</p>
                     <h2
                       className="type-display text-foreground"
                       id={index === 0 ? "signature-process-title" : undefined}
@@ -216,7 +236,7 @@ export function SignatureExperienceSection() {
                 ))}
               </div>
 
-              <ol aria-label="Process progress" className="mt-10 flex gap-3">
+              <ol aria-label={processLabel} className="mt-10 flex gap-3">
                 {scenes.map((scene, index) => (
                   <li key={scene.id}>
                     <span
@@ -255,10 +275,8 @@ export function SignatureExperienceSection() {
       <section className="signature-prototype-static bg-background-secondary py-[var(--section-spacing-large)]">
         <Container>
           <div className="grid gap-8 border-t border-border pt-6 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p className="type-label text-foreground-muted lg:col-span-3">
-              Process
-            </p>
-              <div className="space-y-20 lg:col-span-7 lg:col-start-5">
+            <p className="type-label text-foreground-muted lg:col-span-3">{processLabel}</p>
+            <div className="space-y-20 lg:col-span-7 lg:col-start-5">
               {scenes.map((scene) => {
                 const layerStates = getLayerStatesForScene(layers, scene);
                 const visibleLayerIds = layerStates
@@ -267,19 +285,15 @@ export function SignatureExperienceSection() {
 
                 return (
                   <article className="grid gap-6 border-t border-border pt-5" key={scene.id}>
-                    <p className="type-label text-foreground-muted">
-                      {scene.index}
-                    </p>
+                    <p className="type-label text-foreground-muted">{scene.index}</p>
                     <div>
-                      <h2 className="type-section-heading text-foreground">
-                        {scene.title}
-                      </h2>
+                      <h2 className="type-section-heading text-foreground">{scene.title}</h2>
                       <p className="mt-5 max-w-[620px] text-pretty text-[length:var(--font-size-body)] leading-[var(--line-height-body)] text-foreground-secondary">
                         {scene.description}
                       </p>
-                        <div className="mt-8 aspect-[4/3] max-w-[680px] overflow-hidden bg-background">
-                          <SignatureDrawing visibleLayerIds={visibleLayerIds} />
-                        </div>
+                      <div className="mt-8 aspect-[4/3] max-w-[680px] overflow-hidden bg-background">
+                        <SignatureDrawing visibleLayerIds={visibleLayerIds} />
+                      </div>
                     </div>
                   </article>
                 );

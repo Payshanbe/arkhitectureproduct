@@ -2,6 +2,7 @@ import type { CollectionConfig } from "payload";
 
 import { isAdminOrEditor } from "../access/admins.ts";
 import { slugField } from "../fields/slugField.ts";
+import { localizeContentFields } from "../localization/localizeContentFields.ts";
 
 export const ProjectCategories: CollectionConfig = {
   slug: "project-categories",
@@ -16,7 +17,7 @@ export const ProjectCategories: CollectionConfig = {
     update: isAdminOrEditor,
   },
   defaultSort: "order",
-  fields: [
+  fields: localizeContentFields([
     {
       name: "title",
       type: "text",
@@ -35,5 +36,5 @@ export const ProjectCategories: CollectionConfig = {
         position: "sidebar",
       },
     },
-  ],
+  ]),
 };

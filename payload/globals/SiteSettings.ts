@@ -1,6 +1,7 @@
 import type { GlobalConfig } from "payload";
 
 import { isAdminOrEditor } from "../access/admins.ts";
+import { localizeContentFields } from "../localization/localizeContentFields.ts";
 import { seoFields } from "../fields/seoFields.ts";
 
 export const SiteSettings: GlobalConfig = {
@@ -9,7 +10,7 @@ export const SiteSettings: GlobalConfig = {
     read: () => true,
     update: isAdminOrEditor,
   },
-  fields: [
+  fields: localizeContentFields([
     {
       name: "siteName",
       type: "text",
@@ -69,5 +70,5 @@ export const SiteSettings: GlobalConfig = {
         },
       ],
     },
-  ],
+  ]),
 };

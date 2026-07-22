@@ -6,6 +6,11 @@ const eslintConfig = [
   ...nextTypescript,
   {
     ignores: [
+      ".agents/**",
+      ".claude/**",
+      ".codex/**",
+      ".github/hooks/**",
+      ".github/skills/**",
       ".next/**",
       "node_modules/**",
       "out/**",

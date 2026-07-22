@@ -8,6 +8,7 @@ import type {
   ContactFormSettingsContent,
   ContactPageContent,
 } from "@/lib/cms/siteContent";
+import type { SiteLocale } from "@/lib/i18n/config";
 
 const fallbackContact: ContactDetails = {
   address: "Tashkent, Uzbekistan",
@@ -97,6 +98,7 @@ interface ContactPageProps {
   contact?: ContactDetails;
   content?: ContactPageContent;
   formSettings?: ContactFormSettingsContent;
+  locale: SiteLocale;
   submissionStatus?: "email" | "required" | "sent";
 }
 
@@ -104,6 +106,7 @@ export function ContactPage({
   contact = fallbackContact,
   content,
   formSettings = fallbackFormSettings,
+  locale,
   submissionStatus,
 }: ContactPageProps) {
   const studioInfo = getStudioInfo(contact, formSettings);
@@ -124,10 +127,7 @@ export function ContactPage({
       >
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p
-              className="type-label text-foreground-muted lg:col-span-2"
-              data-contact-reveal
-            >
+            <p className="type-label text-foreground-muted lg:col-span-2" data-contact-reveal>
               {content?.hero.label ?? "Contact"}
             </p>
 
@@ -173,6 +173,7 @@ export function ContactPage({
                 data-contact-reveal
                 id="contact-form"
               >
+                <input name="locale" type="hidden" value={locale} />
                 <div className="hidden" aria-hidden="true">
                   <label>
                     {formSettings.labels.company}
@@ -180,7 +181,12 @@ export function ContactPage({
                   </label>
                 </div>
 
-                <TextField autoComplete="name" label={formSettings.labels.name} name="name" required />
+                <TextField
+                  autoComplete="name"
+                  label={formSettings.labels.name}
+                  name="name"
+                  required
+                />
                 <TextField
                   autoComplete="email"
                   label={formSettings.labels.email}
@@ -226,10 +232,7 @@ export function ContactPage({
       <Section className="bg-background" spacing="large">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p
-              className="type-label text-foreground-muted lg:col-span-2"
-              data-contact-reveal
-            >
+            <p className="type-label text-foreground-muted lg:col-span-2" data-contact-reveal>
               {formSettings.labels.studioInformation}
             </p>
 
@@ -250,10 +253,7 @@ export function ContactPage({
       <Section className="bg-background" spacing="large">
         <Container>
           <div className="grid gap-10 lg:grid-cols-12 lg:gap-[var(--grid-gap)]">
-            <p
-              className="type-label text-foreground-muted lg:col-span-2"
-              data-contact-reveal
-            >
+            <p className="type-label text-foreground-muted lg:col-span-2" data-contact-reveal>
               {content?.collaboration.label ?? "Collaboration"}
             </p>
 

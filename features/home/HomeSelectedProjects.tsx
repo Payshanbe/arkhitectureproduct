@@ -8,6 +8,7 @@ import { Section } from "@/components/layout/Section";
 import { HomeSelectedProjectsMotion } from "@/features/home/HomeSelectedProjectsMotion";
 import { normalizePayloadImageUrl } from "@/lib/cms/media";
 import type { HomePageContent } from "@/lib/cms/siteContent";
+import { defaultLocale, localizePath, type SiteLocale } from "@/lib/i18n/config";
 import type { Media, Project, ProjectCategory } from "@/types/payload-types";
 
 interface SelectedProject {
@@ -137,13 +138,15 @@ function normalizeProject(project: Project): SelectedProject {
   };
 }
 
-async function getSelectedProjects(): Promise<SelectedProject[]> {
+async function getSelectedProjects(locale: SiteLocale): Promise<SelectedProject[]> {
   try {
     const payload = await getPayload({ config: configPromise });
     const projects = await payload.find({
       collection: "projects",
       depth: 2,
+      fallbackLocale: defaultLocale,
       limit: 6,
+      locale,
       sort: "order",
       where: {
         and: [
@@ -173,10 +176,14 @@ async function getSelectedProjects(): Promise<SelectedProject[]> {
 
 interface HomeSelectedProjectsProps {
   content?: HomePageContent["selectedProjects"];
+  locale: SiteLocale;
 }
 
-export async function HomeSelectedProjects({ content }: HomeSelectedProjectsProps) {
-  const projects = await getSelectedProjects();
+export async function HomeSelectedProjects({ content, locale }: HomeSelectedProjectsProps) {
+  const projects = (await getSelectedProjects(locale)).map((project) => ({
+    ...project,
+    href: localizePath(project.href, locale),
+  }));
 
   return (
     <Section className="bg-background" spacing="medium">
@@ -194,7 +201,8 @@ export async function HomeSelectedProjects({ content }: HomeSelectedProjectsProp
             </div>
             <div className="lg:col-span-5 lg:col-start-5">
               <h2 className="type-statement text-foreground">
-                {content?.heading ?? "A quiet sequence of spaces shaped by proportion, material, and light."}
+                {content?.heading ??
+                  "A quiet sequence of spaces shaped by proportion, material, and light."}
               </h2>
             </div>
           </div>
@@ -213,10 +221,7 @@ export async function HomeSelectedProjects({ content }: HomeSelectedProjectsProp
                     .join(" ")}
                   key={project.id}
                 >
-                  <Link
-                    className={`plate-link group block ${pattern.image}`}
-                    href={project.href}
-                  >
+                  <Link className={`plate-link group block ${pattern.image}`} href={project.href}>
                     <div
                       className={`editorial-image-frame relative overflow-hidden bg-surface ${pattern.media}`}
                       data-project-reveal
@@ -237,9 +242,7 @@ export async function HomeSelectedProjects({ content }: HomeSelectedProjectsProp
                           {String(index + 1).padStart(2, "0")}
                         </span>
                         <h3 className="type-project-title text-foreground">
-                          <span className="plate-link-underline">
-                            {project.title}
-                          </span>
+                          <span className="plate-link-underline">{project.title}</span>
                         </h3>
                       </div>
 
@@ -262,7 +265,9 @@ export async function HomeSelectedProjects({ content }: HomeSelectedProjectsProp
                       <div className="lg:sticky lg:top-[calc(var(--space-24)+var(--space-8))]">
                         <div className="border-t border-border/60 pt-4" data-project-marginalia>
                           {project.locationLine && (
-                            <p className="type-label text-foreground-muted">{project.locationLine}</p>
+                            <p className="type-label text-foreground-muted">
+                              {project.locationLine}
+                            </p>
                           )}
                           {project.excerpt && (
                             <p className="mt-3 max-w-[34ch] text-pretty type-caption text-foreground-secondary">
@@ -281,9 +286,11 @@ export async function HomeSelectedProjects({ content }: HomeSelectedProjectsProp
           <div className="mt-[clamp(var(--space-16),8vw,var(--space-24))] border-t border-border/60 pt-6 text-right">
             <Link
               className="plate-link inline-flex type-label text-foreground"
-              href="/work"
+              href={localizePath("/work", locale)}
             >
-              <span className="plate-link-underline">{content?.archiveLinkLabel ?? "View the archive →"}</span>
+              <span className="plate-link-underline">
+                {content?.archiveLinkLabel ?? "View the archive →"}
+              </span>
             </Link>
           </div>
         </Container>

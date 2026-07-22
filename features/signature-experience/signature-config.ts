@@ -5,6 +5,7 @@ import type {
   SignatureReducedMotionBehavior,
   SignatureTiming,
 } from "@/features/signature-experience/types";
+import type { SiteLocale } from "@/lib/i18n/config";
 
 export const signatureSceneOrder = [
   "research",
@@ -135,6 +136,91 @@ export const signatureScenes: Scene[] = [
     transition: "Depth becomes feeling.",
   },
 ];
+
+const localizedSignatureCopy: Record<
+  SiteLocale,
+  Record<Scene["id"], Pick<Scene, "description" | "title" | "transition">>
+> = {
+  ru: {
+    research: {
+      description:
+        "Мы начинаем с изучения задачи, места и повседневных ритуалов, которые сформируют проект.",
+      title: "Исследование",
+      transition: "Первые линии возникают из тишины.",
+    },
+    context: {
+      description:
+        "Существующие условия, ориентация, климат и движение определяют первые границы проекта.",
+      title: "Контекст",
+      transition: "Линии обретают место.",
+    },
+    structure: {
+      description:
+        "Пропорция, движение и порядок превращают наблюдения в пространственную систему.",
+      title: "Структура",
+      transition: "Место обретает порядок.",
+    },
+    material: {
+      description:
+        "Материалы выбираются за тактильность, естественное старение и взаимодействие со светом.",
+      title: "Материал",
+      transition: "Порядок обретает материальность.",
+    },
+    light: {
+      description: "Свет становится частью архитектуры, формируя ритм, глубину и состояние покоя.",
+      title: "Свет",
+      transition: "Материя обретает глубину.",
+    },
+    atmosphere: {
+      description:
+        "Итоговое пространство оценивается по тому, насколько спокойно оно поддерживает жизнь и память.",
+      title: "Атмосфера",
+      transition: "Глубина становится ощущением.",
+    },
+  },
+  tj: {
+    research: {
+      description:
+        "Мо аз омӯзиши вазифа, макон ва одатҳои рӯзмаррае оғоз мекунем, ки лоиҳаро шакл медиҳанд.",
+      title: "Таҳқиқ",
+      transition: "Хатҳои аввал аз оромӣ пайдо мешаванд.",
+    },
+    context: {
+      description:
+        "Шароити мавҷуда, самтгирӣ, иқлим ва ҳаракат ҳудудҳои аввалини лоиҳаро муайян мекунанд.",
+      title: "Контекст",
+      transition: "Хатҳо ба макон табдил меёбанд.",
+    },
+    structure: {
+      description: "Таносуб, ҳаракат ва низом мушоҳидаҳоро ба сохтори фазоӣ табдил медиҳанд.",
+      title: "Сохтор",
+      transition: "Макон низом пайдо мекунад.",
+    },
+    material: {
+      description: "Мавод барои ламс, пиршавии табиӣ ва муносибаташ бо рӯшноӣ интихоб мешавад.",
+      title: "Мавод",
+      transition: "Низом ба моддият табдил меёбад.",
+    },
+    light: {
+      description: "Рӯшноӣ қисми меъморӣ шуда, ритм, амиқӣ ва оромиро шакл медиҳад.",
+      title: "Рӯшноӣ",
+      transition: "Мавод амиқӣ пайдо мекунад.",
+    },
+    atmosphere: {
+      description:
+        "Фазои ниҳоӣ бо он санҷида мешавад, ки зиндагӣ ва хотираро то чӣ андоза ором дастгирӣ мекунад.",
+      title: "Муҳит",
+      transition: "Амиқӣ ба эҳсос табдил меёбад.",
+    },
+  },
+};
+
+export function getSignatureScenes(locale: SiteLocale): Scene[] {
+  return signatureScenes.map((scene) => ({
+    ...scene,
+    ...localizedSignatureCopy[locale][scene.id],
+  }));
+}
 
 export const signatureTiming: SignatureTiming = {
   anticipatePin: 1,

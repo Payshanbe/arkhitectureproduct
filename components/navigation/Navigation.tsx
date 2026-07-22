@@ -5,6 +5,7 @@ import { usePathname } from "next/navigation";
 
 import type { NavigationItem } from "@/lib/constants/navigation";
 import { primaryNavigation } from "@/lib/constants/navigation";
+import { getLocaleFromPathname, localizePath, type SiteLocale } from "@/lib/i18n/config";
 import { cn } from "@/utils/cn";
 
 interface NavigationProps {
@@ -12,6 +13,7 @@ interface NavigationProps {
   itemClassName?: string;
   items?: NavigationItem[];
   label?: string;
+  locale?: SiteLocale;
   onNavigate?: () => void;
   variant?: "inline" | "menu";
 }
@@ -29,10 +31,12 @@ export function Navigation({
   itemClassName,
   items = primaryNavigation,
   label = "Primary navigation",
+  locale,
   onNavigate,
   variant = "inline",
 }: NavigationProps) {
   const pathname = usePathname();
+  const activeLocale = locale ?? getLocaleFromPathname(pathname);
 
   return (
     <nav aria-label={label} className={className}>
@@ -43,10 +47,11 @@ export function Navigation({
         )}
       >
         {items.map((item) => {
-          const isActive = isActivePath(pathname, item.href);
+          const href = localizePath(item.href, activeLocale);
+          const isActive = isActivePath(pathname, href);
 
           return (
-            <li key={item.href}>
+            <li key={href}>
               <Link
                 aria-current={isActive ? "page" : undefined}
                 className={cn(
@@ -55,15 +60,10 @@ export function Navigation({
                   variant === "menu" && "type-display",
                   itemClassName,
                 )}
-                href={item.href}
+                href={href}
                 onClick={onNavigate}
               >
-                <span
-                  className={cn(
-                    "nav-underline",
-                    isActive && "nav-underline--active",
-                  )}
-                >
+                <span className={cn("nav-underline", isActive && "nav-underline--active")}>
                   {item.label}
                 </span>
               </Link>

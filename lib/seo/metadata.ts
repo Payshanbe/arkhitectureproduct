@@ -1,13 +1,16 @@
 import type { Metadata } from "next";
 
+import { BRAND_NAME } from "@/lib/brand";
+import { getOpenGraphLocale, localizePath, type SiteLocale } from "@/lib/i18n/config";
+
 export const siteConfig = {
-  name: "Arkhitecture",
-  title: "Arkhitecture",
-  titleTemplate: "%s | Arkhitecture",
+  name: BRAND_NAME,
+  title: BRAND_NAME,
+  titleTemplate: `%s | ${BRAND_NAME}`,
   description:
     "A quiet architecture and interior design studio shaping spaces through light, proportion, material, and restraint.",
   urlFallback: "http://localhost:3000",
-  locale: "en_US",
+  locale: "ru_RU",
   twitterCard: "summary_large_image",
 } as const;
 
@@ -93,6 +96,35 @@ export function createPageMetadata({
   };
 }
 
+interface LocalizedPageMetadataOptions extends PageMetadataOptions {
+  locale: SiteLocale;
+}
+
+export function createLocalizedPageMetadata({
+  locale,
+  path,
+  ...options
+}: LocalizedPageMetadataOptions): Metadata {
+  const localizedPath = localizePath(path, locale);
+  const metadata = createPageMetadata({ ...options, path: localizedPath });
+
+  return {
+    ...metadata,
+    alternates: {
+      canonical: absoluteUrl(localizedPath),
+      languages: {
+        ru: absoluteUrl(localizePath(path, "ru")),
+        tg: absoluteUrl(localizePath(path, "tj")),
+      },
+    },
+    openGraph: {
+      ...metadata.openGraph,
+      locale: getOpenGraphLocale(locale),
+      url: absoluteUrl(localizedPath),
+    },
+  };
+}
+
 export const globalMetadata: Metadata = {
   description: siteConfig.description,
   icons: {
@@ -104,11 +136,12 @@ export const globalMetadata: Metadata = {
     ],
     icon: [
       {
-        type: "image/svg+xml",
-        url: "/favicons/favicon.svg",
+        sizes: "64x64",
+        type: "image/png",
+        url: "/favicons/favicon.png",
       },
     ],
-    shortcut: "/favicons/favicon.svg",
+    shortcut: "/favicons/favicon.png",
   },
   metadataBase: getSiteUrl(),
   openGraph: {
@@ -117,7 +150,7 @@ export const globalMetadata: Metadata = {
     siteName: siteConfig.name,
     title: siteConfig.title,
     type: "website",
-    url: absoluteUrl("/"),
+    url: absoluteUrl("/ru"),
   },
   title: {
     default: siteConfig.title,

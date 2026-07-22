@@ -1,13 +1,19 @@
 import Link from "next/link";
 
+import { BrandLogo } from "@/components/brand/BrandLogo";
 import { Container } from "@/components/layout/Container";
 import { getSiteChromeContent } from "@/lib/cms/siteContent";
+import { localizePath, type SiteLocale } from "@/lib/i18n/config";
 
 const footerLinkClass =
   "text-[length:var(--font-size-label)] uppercase tracking-[var(--letter-spacing-label)] leading-[var(--line-height-ui)] text-foreground-muted transition-opacity duration-base ease-architectural-out hover:opacity-65 focus-visible:text-accent";
 
-export async function Footer() {
-  const { contact, navigationItems, settings } = await getSiteChromeContent();
+interface FooterProps {
+  locale: SiteLocale;
+}
+
+export async function Footer({ locale }: FooterProps) {
+  const { contact, navigationItems, settings } = await getSiteChromeContent(locale);
 
   return (
     <footer className="bg-background pb-10 pt-6 text-foreground lg:pb-12">
@@ -15,15 +21,20 @@ export async function Footer() {
         <div className="border-t border-border pt-6">
           <div className="flex flex-col gap-6 lg:flex-row lg:items-baseline lg:justify-between lg:gap-10">
             <Link
-              className="inline-flex text-[length:var(--font-size-label)] uppercase leading-[var(--line-height-ui)] tracking-[0.32em] transition-opacity duration-base ease-architectural-out hover:opacity-65 focus-visible:text-accent"
-              href="/"
+              aria-label={`${settings.siteName} — Home`}
+              className="inline-flex transition-opacity duration-base ease-architectural-out hover:opacity-65 focus-visible:text-accent"
+              href={localizePath("/", locale)}
             >
-              {settings.siteName}
+              <BrandLogo name={settings.siteName} variant="footer" />
             </Link>
 
             <nav aria-label="Footer navigation" className="flex flex-wrap gap-x-7 gap-y-3">
               {navigationItems.map((item) => (
-                <Link className={footerLinkClass} href={item.href} key={item.href}>
+                <Link
+                  className={footerLinkClass}
+                  href={localizePath(item.href, locale)}
+                  key={item.href}
+                >
                   {item.label}
                 </Link>
               ))}

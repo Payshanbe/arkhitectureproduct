@@ -1,6 +1,7 @@
 import type { GlobalConfig } from "payload";
 
 import { isAdminOrEditor } from "../access/admins.ts";
+import { localizeContentFields } from "../localization/localizeContentFields.ts";
 
 export const ContactInfo: GlobalConfig = {
   slug: "contact-info",
@@ -8,7 +9,7 @@ export const ContactInfo: GlobalConfig = {
     read: () => true,
     update: isAdminOrEditor,
   },
-  fields: [
+  fields: localizeContentFields([
     {
       name: "email",
       type: "email",
@@ -43,5 +44,5 @@ export const ContactInfo: GlobalConfig = {
       name: "pinterest",
       type: "text",
     },
-  ],
+  ]),
 };

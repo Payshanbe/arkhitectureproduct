@@ -1,5 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="Arkhitecture">
-  <rect width="180" height="180" rx="36" fill="#f4f1eb" />
-  <path d="M45 135V45h90v90h-17V62H62v73H45Z" fill="#1f1d1a" />
-  <path d="M79 135V84h22v51H79Z" fill="#8a8174" />
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 180 180" role="img" aria-label="PRO DESIGN">
+  <rect width="180" height="180" rx="36" fill="#1f1d1a" />
+  <g fill="none" stroke="#f4f1eb" stroke-linecap="square" stroke-linejoin="miter">
+    <path d="M24 94h132M24 116h132" opacity=".38" stroke-width="3" />
+    <path d="M42 134V86l42-34 34 34v48M84 134V86l39-39 39 39v48" stroke-width="5" />
+    <path d="M42 86h120M42 134h120M42 134l42-28h78M84 134l39-28" opacity=".82" stroke-width="5" />
+  </g>
 </svg>

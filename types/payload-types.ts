@@ -71,6 +71,7 @@ export interface Config {
     media: Media;
     'project-categories': ProjectCategory;
     projects: Project;
+    partners: Partner;
     'contact-submissions': ContactSubmission;
     'payload-kv': PayloadKv;
     'payload-locked-documents': PayloadLockedDocument;
@@ -83,6 +84,7 @@ export interface Config {
     media: MediaSelect<false> | MediaSelect<true>;
     'project-categories': ProjectCategoriesSelect<false> | ProjectCategoriesSelect<true>;
     projects: ProjectsSelect<false> | ProjectsSelect<true>;
+    partners: PartnersSelect<false> | PartnersSelect<true>;
     'contact-submissions': ContactSubmissionsSelect<false> | ContactSubmissionsSelect<true>;
     'payload-kv': PayloadKvSelect<false> | PayloadKvSelect<true>;
     'payload-locked-documents': PayloadLockedDocumentsSelect<false> | PayloadLockedDocumentsSelect<true>;
@@ -92,7 +94,7 @@ export interface Config {
   db: {
     defaultIDType: number;
   };
-  fallbackLocale: null;
+  fallbackLocale: ('false' | 'none' | 'null') | false | null | ('ru' | 'tj') | ('ru' | 'tj')[];
   globals: {
     'site-settings': SiteSetting;
     'contact-info': ContactInfo;
@@ -117,7 +119,7 @@ export interface Config {
     'project-detail-settings': ProjectDetailSettingsSelect<false> | ProjectDetailSettingsSelect<true>;
     'contact-form-settings': ContactFormSettingsSelect<false> | ContactFormSettingsSelect<true>;
   };
-  locale: null;
+  locale: 'ru' | 'tj';
   widgets: {
     collections: CollectionsWidget;
   };
@@ -306,6 +308,31 @@ export interface Project {
   _status?: ('draft' | 'published') | null;
 }
 /**
+ * Homepage partner rail. An uploaded Media logo replaces the selected Logoipsum placeholder.
+ *
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners".
+ */
+export interface Partner {
+  id: number;
+  /**
+   * Used as accessible text when the visual logo has no readable wordmark.
+   */
+  name: string;
+  /**
+   * Optional. Upload or select the real partner logo here; it takes priority over the placeholder.
+   */
+  logo?: (number | null) | Media;
+  /**
+   * Optional absolute URL beginning with https:// or http://.
+   */
+  website?: string | null;
+  order?: number | null;
+  published?: boolean | null;
+  updatedAt: string;
+  createdAt: string;
+}
+/**
  * This interface was referenced by `Config`'s JSON-Schema
  * via the `definition` "contact-submissions".
  */
@@ -361,6 +388,10 @@ export interface PayloadLockedDocument {
     | ({
         relationTo: 'projects';
         value: number | Project;
+      } | null)
+    | ({
+        relationTo: 'partners';
+        value: number | Partner;
       } | null)
     | ({
         relationTo: 'contact-submissions';
@@ -545,6 +576,19 @@ export interface ProjectsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "partners_select".
+ */
+export interface PartnersSelect<T extends boolean = true> {
+  name?: T;
+  logo?: T;
+  website?: T;
+  order?: T;
+  published?: T;
+  updatedAt?: T;
+  createdAt?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

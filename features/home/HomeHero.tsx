@@ -2,6 +2,7 @@ import { Container } from "@/components/layout/Container";
 import { Section } from "@/components/layout/Section";
 import { HomeHeroMotion } from "@/features/home/HomeHeroMotion";
 import { ArchitecturalStudyLazy } from "@/features/three";
+import { BRAND_NAME } from "@/lib/brand";
 import type { HomePageContent } from "@/lib/cms/siteContent";
 
 interface HomeHeroProps {
@@ -9,7 +10,7 @@ interface HomeHeroProps {
   siteName?: string;
 }
 
-export function HomeHero({ content, siteName = "Arkhitecture" }: HomeHeroProps) {
+export function HomeHero({ content, siteName = BRAND_NAME }: HomeHeroProps) {
   return (
     <Section className="overflow-hidden bg-background py-0" spacing="none">
       <HomeHeroMotion className="relative min-h-[88svh] sm:min-h-svh">

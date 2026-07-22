@@ -2,6 +2,7 @@ import type { GlobalConfig } from "payload";
 
 import { isAdminOrEditor } from "../access/admins.ts";
 import { seoFields } from "../fields/seoFields.ts";
+import { localizeContentFields } from "../localization/localizeContentFields.ts";
 
 export const HomePage: GlobalConfig = {
   slug: "home-page",
@@ -10,7 +11,7 @@ export const HomePage: GlobalConfig = {
     read: () => true,
     update: isAdminOrEditor,
   },
-  fields: [
+  fields: localizeContentFields([
     {
       name: "hero",
       type: "group",
@@ -106,5 +107,5 @@ export const HomePage: GlobalConfig = {
       ],
     },
     seoFields,
-  ],
+  ]),
 };

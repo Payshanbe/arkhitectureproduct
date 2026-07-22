@@ -8,6 +8,7 @@ import { Section } from "@/components/layout/Section";
 import { HomeFeaturedProjectMotion } from "@/features/home/HomeFeaturedProjectMotion";
 import { normalizePayloadImageUrl } from "@/lib/cms/media";
 import type { HomePageContent } from "@/lib/cms/siteContent";
+import { defaultLocale, localizePath, type SiteLocale } from "@/lib/i18n/config";
 import type { Media, Project, ProjectCategory } from "@/types/payload-types";
 
 interface FeaturedProject {
@@ -69,13 +70,15 @@ function normalizeProject(project: Project): FeaturedProject {
   };
 }
 
-async function getFeaturedProject(): Promise<FeaturedProject> {
+async function getFeaturedProject(locale: SiteLocale): Promise<FeaturedProject> {
   try {
     const payload = await getPayload({ config: configPromise });
     const projects = await payload.find({
       collection: "projects",
       depth: 2,
+      fallbackLocale: defaultLocale,
       limit: 1,
+      locale,
       sort: "order",
       where: {
         and: [
@@ -107,10 +110,15 @@ async function getFeaturedProject(): Promise<FeaturedProject> {
 
 interface HomeFeaturedProjectProps {
   content?: HomePageContent["featuredProject"];
+  locale: SiteLocale;
 }
 
-export async function HomeFeaturedProject({ content }: HomeFeaturedProjectProps) {
-  const project = await getFeaturedProject();
+export async function HomeFeaturedProject({ content, locale }: HomeFeaturedProjectProps) {
+  const projectDocument = await getFeaturedProject(locale);
+  const project = {
+    ...projectDocument,
+    href: localizePath(projectDocument.href, locale),
+  };
 
   return (
     <Section className="bg-background" spacing="medium">
@@ -129,11 +137,14 @@ export async function HomeFeaturedProject({ content }: HomeFeaturedProjectProps)
               </h2>
             </div>
           </div>
-
         </Container>
 
         <article className="mt-[clamp(var(--space-12),6vw,var(--space-20))]">
-          <Link aria-label={`View project: ${project.title}`} className="group block" href={project.href}>
+          <Link
+            aria-label={`View project: ${project.title}`}
+            className="group block"
+            href={project.href}
+          >
             <div
               className="editorial-image-frame relative aspect-[4/5] overflow-hidden bg-surface sm:aspect-[16/9] lg:aspect-[21/9]"
               data-featured-project-image-frame
@@ -161,10 +172,7 @@ export async function HomeFeaturedProject({ content }: HomeFeaturedProjectProps)
               </div>
 
               <div className="lg:col-span-5 lg:col-start-5">
-                <h3
-                  className="type-project-title text-foreground"
-                  data-featured-project-text
-                >
+                <h3 className="type-project-title text-foreground" data-featured-project-text>
                   {project.title}
                 </h3>
 
@@ -176,12 +184,17 @@ export async function HomeFeaturedProject({ content }: HomeFeaturedProjectProps)
                 </p>
               </div>
 
-              <div className="lg:col-span-2 lg:col-start-11 lg:text-right" data-featured-project-text>
+              <div
+                className="lg:col-span-2 lg:col-start-11 lg:text-right"
+                data-featured-project-text
+              >
                 <Link
                   className="plate-link inline-flex type-label text-foreground"
                   href={project.href}
                 >
-                  <span className="plate-link-underline">{content?.linkLabel ?? "View Project →"}</span>
+                  <span className="plate-link-underline">
+                    {content?.linkLabel ?? "View Project →"}
+                  </span>
                 </Link>
               </div>
             </div>

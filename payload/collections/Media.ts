@@ -1,6 +1,7 @@
 import type { CollectionConfig } from "payload";
 
 import { isAdminOrEditor } from "../access/admins.ts";
+import { localizeContentFields } from "../localization/localizeContentFields.ts";
 
 export const Media: CollectionConfig = {
   slug: "media",
@@ -31,7 +32,7 @@ export const Media: CollectionConfig = {
     read: () => true,
     update: isAdminOrEditor,
   },
-  fields: [
+  fields: localizeContentFields([
     {
       name: "alt",
       type: "text",
@@ -54,5 +55,5 @@ export const Media: CollectionConfig = {
       name: "photographer",
       type: "text",
     },
-  ],
+  ]),
 };

@@ -1,6 +1,7 @@
 import type { GlobalConfig } from "payload";
 
 import { isAdminOrEditor } from "../access/admins.ts";
+import { localizeContentFields } from "../localization/localizeContentFields.ts";
 
 export const ProjectDetailSettings: GlobalConfig = {
   slug: "project-detail-settings",
@@ -9,7 +10,7 @@ export const ProjectDetailSettings: GlobalConfig = {
     read: () => true,
     update: isAdminOrEditor,
   },
-  fields: [
+  fields: localizeContentFields([
     {
       name: "labels",
       type: "group",
@@ -59,5 +60,5 @@ export const ProjectDetailSettings: GlobalConfig = {
         { name: "inProgress", type: "text", defaultValue: "In Progress" },
       ],
     },
-  ],
+  ]),
 };
