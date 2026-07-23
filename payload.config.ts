@@ -28,11 +28,36 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const payloadEnv = getPayloadEnv();
 const vercelBlobToken = getVercelBlobToken();
-const vercelDeploymentOrigin = process.env.VERCEL_URL
-  ? `https://${process.env.VERCEL_URL}`
-  : undefined;
+
+function getOrigin(value: string | undefined): string | undefined {
+  if (!value) {
+    return undefined;
+  }
+
+  try {
+    const url = new URL(value.includes("://") ? value : `https://${value}`);
+
+    if (url.protocol !== "http:" && url.protocol !== "https:") {
+      return undefined;
+    }
+
+    return url.origin;
+  } catch {
+    return undefined;
+  }
+}
+
 const trustedOrigins = Array.from(
-  new Set([payloadEnv.NEXT_PUBLIC_SITE_URL, vercelDeploymentOrigin].filter(Boolean)),
+  new Set(
+    [
+      payloadEnv.NEXT_PUBLIC_SITE_URL,
+      process.env.VERCEL_URL,
+      process.env.VERCEL_BRANCH_URL,
+      process.env.VERCEL_PROJECT_PRODUCTION_URL,
+    ]
+      .map(getOrigin)
+      .filter(Boolean),
+  ),
 ) as string[];
 
 export default buildConfig({
