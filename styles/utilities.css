@@ -356,9 +356,12 @@
   outline-offset: 0.65rem;
 }
 
+.home-partners__viewport:focus-within .home-partners__track {
+  animation-play-state: paused;
+}
+
 @media (hover: hover) {
-  .home-partners__viewport:hover .home-partners__track,
-  .home-partners__viewport:focus-within .home-partners__track {
+  .home-partners__viewport:hover .home-partners__track {
     animation-play-state: paused;
   }
 
@@ -375,12 +378,20 @@
 
 @media (width < 768px) {
   .home-partners__viewport {
-    overflow-x: auto;
-    padding-inline: var(--container-padding);
-    mask-image: none;
-    scroll-snap-type: x proximity;
+    --partner-gap: clamp(2.25rem, 10vw, 3rem);
+
+    overflow: hidden;
+    padding-inline: 0;
+    mask-image: linear-gradient(to right, transparent, black 5%, black 95%, transparent);
+    scroll-snap-type: none;
     scrollbar-width: none;
-    -webkit-mask-image: none;
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent,
+      black 5%,
+      black 95%,
+      transparent
+    );
   }
 
   .home-partners__viewport::-webkit-scrollbar {
@@ -388,22 +399,24 @@
   }
 
   .home-partners__track {
-    animation: none;
+    animation-duration: 52s;
   }
 
   .home-partners__set {
-    gap: 2.75rem;
+    gap: var(--partner-gap);
     min-width: max-content;
-    padding-right: var(--container-padding);
-  }
-
-  .home-partners__set[aria-hidden="true"] {
-    display: none;
+    padding-right: var(--partner-gap);
   }
 
   .home-partners__item {
-    width: 9rem;
+    width: clamp(7.5rem, 30vw, 8.5rem);
     scroll-snap-align: start;
+  }
+}
+
+@media (pointer: coarse) and (prefers-reduced-motion: no-preference) {
+  .home-partners__viewport:active .home-partners__track {
+    animation-play-state: paused;
   }
 }
 
@@ -412,6 +425,7 @@
     overflow-x: auto;
     padding-inline: var(--container-padding);
     mask-image: none;
+    scroll-snap-type: x proximity;
     scrollbar-width: none;
     -webkit-mask-image: none;
   }
@@ -422,6 +436,15 @@
 
   .home-partners__set[aria-hidden="true"] {
     display: none;
+  }
+
+  .home-partners__set {
+    min-width: max-content;
+    padding-right: var(--container-padding);
+  }
+
+  .home-partners__item {
+    scroll-snap-align: start;
   }
 }
 
