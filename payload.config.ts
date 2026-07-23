@@ -28,6 +28,12 @@ const filename = fileURLToPath(import.meta.url);
 const dirname = path.dirname(filename);
 const payloadEnv = getPayloadEnv();
 const vercelBlobToken = getVercelBlobToken();
+const vercelDeploymentOrigin = process.env.VERCEL_URL
+  ? `https://${process.env.VERCEL_URL}`
+  : undefined;
+const trustedOrigins = Array.from(
+  new Set([payloadEnv.NEXT_PUBLIC_SITE_URL, vercelDeploymentOrigin].filter(Boolean)),
+) as string[];
 
 export default buildConfig({
   admin: {
@@ -37,6 +43,8 @@ export default buildConfig({
     },
   },
   collections: [Users, Media, ProjectCategories, Projects, Partners, ContactSubmissions],
+  cors: trustedOrigins,
+  csrf: trustedOrigins,
   globals: [
     SiteSettings,
     ContactInfo,
@@ -71,6 +79,7 @@ export default buildConfig({
     outputFile: path.resolve(dirname, "types/payload-types.ts"),
   },
   graphQL: {
+    disable: process.env.NODE_ENV === "production",
     schemaOutputFile: path.resolve(dirname, "types/payload-schema.graphql"),
   },
   plugins: [
@@ -83,4 +92,5 @@ export default buildConfig({
       token: vercelBlobToken,
     }),
   ],
+  telemetry: false,
 });

@@ -69,12 +69,14 @@ const labelClass = "type-label text-foreground-muted";
 function TextField({
   autoComplete,
   label,
+  maxLength,
   name,
   required = false,
   type = "text",
 }: {
   autoComplete?: string;
   label: string;
+  maxLength: number;
   name: string;
   required?: boolean;
   type?: string;
@@ -85,6 +87,7 @@ function TextField({
       <input
         autoComplete={autoComplete}
         className={fieldClass}
+        maxLength={maxLength}
         name={name}
         placeholder={label}
         required={required}
@@ -184,24 +187,35 @@ export function ContactPage({
                 <TextField
                   autoComplete="name"
                   label={formSettings.labels.name}
+                  maxLength={120}
                   name="name"
                   required
                 />
                 <TextField
                   autoComplete="email"
                   label={formSettings.labels.email}
+                  maxLength={254}
                   name="email"
                   required
                   type="email"
                 />
-                <TextField label={formSettings.labels.projectType} name="projectType" />
-                <TextField label={formSettings.labels.estimatedBudget} name="estimatedBudget" />
-                <TextField label={formSettings.labels.timeline} name="timeline" />
+                <TextField
+                  label={formSettings.labels.projectType}
+                  maxLength={160}
+                  name="projectType"
+                />
+                <TextField
+                  label={formSettings.labels.estimatedBudget}
+                  maxLength={160}
+                  name="estimatedBudget"
+                />
+                <TextField label={formSettings.labels.timeline} maxLength={160} name="timeline" />
 
                 <label className="block">
                   <span className={labelClass}>{formSettings.labels.message}</span>
                   <textarea
                     className={`${fieldClass} min-h-40 resize-y`}
+                    maxLength={5000}
                     name="message"
                     placeholder={formSettings.placeholders.message}
                     required
